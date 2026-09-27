@@ -19,7 +19,12 @@ class Liquidacion extends Model
         'rendido',
     ];
 
-    // Relación: Una liquidación pertenece a un Contrato
+    // Convertimos los campos en objetos de fecha automáticamente
+    protected $casts = [
+        'pagado' => 'date',
+        'rendido' => 'date',
+    ];
+
     public function contrato()
     {
         return $this->belongsTo(Contrato::class, 'contrato_id');
