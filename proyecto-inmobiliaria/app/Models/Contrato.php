@@ -16,6 +16,7 @@ class Contrato extends Model
         'fecha_inicio',
         'fecha_finalizacion',
         'monto_inicial',
+        'monto_actual',
         'periodo_actualizacion',
         'indice_actualizacion',
         'duracion',

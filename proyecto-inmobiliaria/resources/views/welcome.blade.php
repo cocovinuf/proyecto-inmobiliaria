@@ -38,15 +38,7 @@
             <p class="mt-4 text-xl text-gray-600 max-w-2xl mx-auto mb-10">
                 Administra propiedades, automatiza contratos y genera liquidaciones de forma precisa desde un solo lugar. Todo el control, sin complicaciones.
             </p>
-            <div class="flex justify-center gap-4">
-                <a href="#caracteristicas" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition duration-300">
-                    Descubrir funciones
-                </a>
-                <a href="/login" class="bg-white border-2 border-gray-200 hover:border-indigo-600 text-gray-700 font-bold py-3 px-8 rounded-lg shadow-sm transition duration-300">
-                    Acceder al Panel
-                </a>
-            </div>
-        </div>
+ 
     </section>
 
     <!-- Características (Módulos del UML) -->
