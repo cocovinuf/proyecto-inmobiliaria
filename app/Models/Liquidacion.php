@@ -13,16 +13,11 @@ class Liquidacion extends Model
 
     protected $fillable = [
         'contrato_id',
+        'periodo', 
         'monto_alquiler',
         'monto_expensa',
         'pagado',
         'rendido',
-    ];
-
-    // Convertimos los campos en objetos de fecha automáticamente
-    protected $casts = [
-        'pagado' => 'date',
-        'rendido' => 'date',
     ];
 
     public function contrato()
