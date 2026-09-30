@@ -15,3 +15,5 @@ Route::view('/contratos','contratos')->name('contratos');
 Route::view('/liquidaciones','liquidaciones')->name('liquidaciones');
 
 Route::view('/reparaciones','reparaciones')->name('reparaciones');
+
+Route::view('/notificaciones','notificaciones')->name('notificaciones');

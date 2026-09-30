@@ -37,6 +37,13 @@
                 <li class="nav-item mb-1">
                     <a href="{{ route('reparaciones') }}" class="nav-link text-secondary"><i class="fa-solid fa-wrench me-2"></i> Reparaciones</a>
                 </li>
+                <li class="nav-item mb-1">
+                        <a href="{{ route('notificaciones') }}" class="nav-link text-secondary d-flex justify-content-between align-items-center">
+                            <span><i class="fa-regular fa-bell me-2"></i> Notificaciones</span>
+                            <!-- Opcional: un pequeño badge (globo) rojo para mostrar si hay alertas sin leer -->
+                            <span class="badge bg-danger rounded-pill">3</span>
+                        </a>
+                </li>
             </ul>
             <hr class="text-secondary">
             <div class="d-flex align-items-center text-white">
