@@ -80,63 +80,7 @@
                 </div>
             </div>
 
-            <!-- Contenedor de la Tabla -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0" id="tabla-notificaciones" style="cursor: pointer;">
-                            <thead class="table-light text-uppercase fs-7">
-                                <tr>
-                                    <th class="py-3 ps-4">Fecha</th>
-                                    <th class="py-3">Tipo</th>
-                                    <th class="py-3">Mensaje</th>
-                                    <th class="py-3">Estado</th>
-                                    <th class="py-3 text-center">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Fila No Leída -->
-                                <tr data-id="1" class="unread-row">
-                                    <td class="py-3 ps-4">30/09/2026</td>
-                                    <td><span class="badge bg-warning text-dark"><i class="fa-solid fa-triangle-exclamation"></i> Vencimiento</span></td>
-                                    <td>El contrato #C-001 de Av. Centenario 4393 vence en 15 días.</td>
-                                    <td><span class="text-danger small"><i class="fa-solid fa-circle" style="font-size: 0.5rem; vertical-align: middle;"></i> No leída</span></td>
-                                    <td class="text-center">
-                                        <!-- En vez de "Detalles", el botón te lleva al origen de la alerta -->
-                                        <button class="btn btn-sm btn-light border text-primary" title="Ir al Contrato">
-                                            <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Contrato
-                                        </button>
-                                    </td>
-                                </tr>
-                                <!-- Fila No Leída -->
-                                <tr data-id="2" class="unread-row">
-                                    <td class="py-3 ps-4">29/09/2026</td>
-                                    <td><span class="badge bg-info text-dark"><i class="fa-solid fa-arrow-trend-up"></i> Actualización</span></td>
-                                    <td>Corresponde actualización de arancel por ICL para el contrato #C-002.</td>
-                                    <td><span class="text-danger small"><i class="fa-solid fa-circle" style="font-size: 0.5rem; vertical-align: middle;"></i> No leída</span></td>
-                                    <td class="text-center">
-                                        <button class="btn btn-sm btn-light border text-primary" title="Ir al Contrato">
-                                            <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Contrato
-                                        </button>
-                                    </td>
-                                </tr>
-                                <!-- Fila Ya Leída -->
-                                <tr data-id="3">
-                                    <td class="py-3 ps-4 text-muted">20/09/2026</td>
-                                    <td><span class="badge bg-secondary"><i class="fa-solid fa-triangle-exclamation"></i> Vencimiento</span></td>
-                                    <td class="text-muted">El contrato #C-005 finalizó y pasó a estado inactivo.</td>
-                                    <td><span class="text-muted small">Leída</span></td>
-                                    <td class="text-center">
-                                        <button class="btn btn-sm btn-light border text-secondary" title="Ir al Contrato">
-                                            <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Contrato
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+
 
         </div>
     </div>

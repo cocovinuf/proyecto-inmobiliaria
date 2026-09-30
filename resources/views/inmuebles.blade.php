@@ -81,51 +81,7 @@
                 </div>
             </div>
 
-            <!-- Contenedor de la Tabla -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0" id="tabla-inmuebles" style="cursor: pointer;">
-                            <thead class="table-light text-uppercase fs-7">
-                                <tr>
-                                    <th class="py-3 ps-4">ID</th>
-                                    <th class="py-3">Dirección</th>
-                                    <th class="py-3">Propietario</th>
-                                    <th class="py-3">Tipo</th>
-                                    <th class="py-3">Estado</th>
-                                    <th class="py-3 text-center">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr data-id="1">
-                                    <td class="py-3 ps-4 fw-semibold">#INM-001</td>
-                                    <td>Av. Centenario 4393</td>
-                                    <td>Juan Pérez</td>
-                                    <td>Departamento</td>
-                                    <td><span class="badge bg-success">Alquilado</span></td>
-                                    <td class="text-center">
-                                        <button class="btn btn-sm btn-light border text-primary" title="Ver más datos">
-                                            <i class="fa-solid fa-eye"></i> Detalles
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr data-id="2">
-                                    <td class="py-3 ps-4 fw-semibold">#INM-002</td>
-                                    <td>Calle San Martín 1250</td>
-                                    <td>María Gómez</td>
-                                    <td>Local Comercial</td>
-                                    <td><span class="badge bg-warning text-dark">Disponible</span></td>
-                                    <td class="text-center">
-                                        <button class="btn btn-sm btn-light border text-primary" title="Ver más datos">
-                                            <i class="fa-solid fa-eye"></i> Detalles
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+
 
         </div>
     </div>

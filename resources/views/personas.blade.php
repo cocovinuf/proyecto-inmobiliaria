@@ -79,63 +79,7 @@
                 </div>
             </div>
 
-            <!-- Contenedor de la Tabla -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0" id="tabla-personas" style="cursor: pointer;">
-                            <thead class="table-light text-uppercase fs-7">
-                                <tr>
-                                    <th class="py-3 ps-4">ID</th>
-                                    <th class="py-3">Nombre Completo</th>
-                                    <th class="py-3">DNI / CUIT</th>
-                                    <th class="py-3">Teléfono</th>
-                                    <th class="py-3">Rol Principal</th>
-                                    <th class="py-3 text-center">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr data-id="1">
-                                    <td class="py-3 ps-4 fw-semibold">#PER-001</td>
-                                    <td>Carlos Ruiz</td>
-                                    <td>30.123.456</td>
-                                    <td>3764-123456</td>
-                                    <td><span class="badge bg-info text-dark">Inquilino</span></td>
-                                    <td class="text-center">
-                                        <button class="btn btn-sm btn-light border text-primary" title="Ver más datos">
-                                            <i class="fa-solid fa-eye"></i> Detalles
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr data-id="2">
-                                    <td class="py-3 ps-4 fw-semibold">#PER-002</td>
-                                    <td>Juan Pérez</td>
-                                    <td>20-25123456-7</td>
-                                    <td>3764-654321</td>
-                                    <td><span class="badge bg-secondary">Propietario</span></td>
-                                    <td class="text-center">
-                                        <button class="btn btn-sm btn-light border text-primary" title="Ver más datos">
-                                            <i class="fa-solid fa-eye"></i> Detalles
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr data-id="3">
-                                    <td class="py-3 ps-4 fw-semibold">#PER-003</td>
-                                    <td>María Gómez</td>
-                                    <td>27.987.654</td>
-                                    <td>3764-987654</td>
-                                    <td><span class="badge bg-warning text-dark">Garante</span></td>
-                                    <td class="text-center">
-                                        <button class="btn btn-sm btn-light border text-primary" title="Ver más datos">
-                                            <i class="fa-solid fa-eye"></i> Detalles
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+
 
         </div>
     </div>

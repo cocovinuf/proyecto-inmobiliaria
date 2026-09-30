@@ -79,51 +79,6 @@
                 </div>
             </div>
 
-            <!-- Contenedor de la Tabla -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0" id="tabla-liquidaciones" style="cursor: pointer;">
-                            <thead class="table-light text-uppercase fs-7">
-                                <tr>
-                                    <th class="py-3 ps-4">ID</th>
-                                    <th class="py-3">Contrato / Inmueble</th>
-                                    <th class="py-3">Período</th>
-                                    <th class="py-3">Monto Total</th>
-                                    <th class="py-3">Estado</th>
-                                    <th class="py-3 text-center">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr data-id="1">
-                                    <td class="py-3 ps-4 fw-semibold">#LIQ-001</td>
-                                    <td>#C-001 (Av. Centenario 4393)</td>
-                                    <td>Octubre 2026</td>
-                                    <td class="fw-medium">$ 140.000</td>
-                                    <td><span class="badge bg-warning text-dark">Pendiente</span></td>
-                                    <td class="text-center">
-                                        <button class="btn btn-sm btn-light border text-primary" title="Ver más datos">
-                                            <i class="fa-solid fa-eye"></i> Detalles
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr data-id="2">
-                                    <td class="py-3 ps-4 fw-semibold">#LIQ-002</td>
-                                    <td>#C-002 (Calle San Martín 1250)</td>
-                                    <td>Septiembre 2026</td>
-                                    <td class="fw-medium">$ 120.000</td>
-                                    <td><span class="badge bg-success">Pagado</span></td>
-                                    <td class="text-center">
-                                        <button class="btn btn-sm btn-light border text-primary" title="Ver más datos">
-                                            <i class="fa-solid fa-eye"></i> Detalles
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
 
         </div>
     </div>

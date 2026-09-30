@@ -81,54 +81,7 @@
                 </div>
             </div>
 
-            <!-- Contenedor de la Tabla -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0" id="tabla-reparaciones" style="cursor: pointer;">
-                            <thead class="table-light text-uppercase fs-7">
-                                <tr>
-                                    <th class="py-3 ps-4">ID</th>
-                                    <th class="py-3">Inmueble</th>
-                                    <th class="py-3">Descripción</th>
-                                    <th class="py-3">Fecha</th>
-                                    <th class="py-3">Costo</th>
-                                    <th class="py-3">Estado</th>
-                                    <th class="py-3 text-center">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr data-id="1">
-                                    <td class="py-3 ps-4 fw-semibold">#REP-001</td>
-                                    <td>Av. Centenario 4393</td>
-                                    <td>Reparación de cañería baño</td>
-                                    <td>12/09/2026</td>
-                                    <td class="fw-medium">$ 45.000</td>
-                                    <td><span class="badge bg-success">Solucionado</span></td>
-                                    <td class="text-center">
-                                        <button class="btn btn-sm btn-light border text-primary" title="Ver más datos">
-                                            <i class="fa-solid fa-eye"></i> Detalles
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr data-id="2">
-                                    <td class="py-3 ps-4 fw-semibold">#REP-002</td>
-                                    <td>Calle San Martín 1250</td>
-                                    <td>Cambio de cerradura principal</td>
-                                    <td>28/09/2026</td>
-                                    <td class="fw-medium">$ 15.000</td>
-                                    <td><span class="badge bg-warning text-dark">Pendiente</span></td>
-                                    <td class="text-center">
-                                        <button class="btn btn-sm btn-light border text-primary" title="Ver más datos">
-                                            <i class="fa-solid fa-eye"></i> Detalles
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+
 
         </div>
     </div>
