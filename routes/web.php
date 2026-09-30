@@ -6,11 +6,12 @@ Route::view('/','welcome')->name('welcome');
 
 Route::view('/home','home')->name('home');
 
-Route::view('/propiedades','propiedades')->name('propiedades');
+Route::view('/inmuebles','inmuebles')->name('inmuebles');
 
-Route::view('/propietarios','propietarios')->name('propietarios');
-
-Route::view('/inquilinos','inquilinos')->name('inquilinos');
+Route::view('/personas','personas')->name('personas');
 
 Route::view('/contratos','contratos')->name('contratos');
 
+Route::view('/liquidaciones','liquidaciones')->name('liquidaciones');
+
+Route::view('/reparaciones','reparaciones')->name('reparaciones');
