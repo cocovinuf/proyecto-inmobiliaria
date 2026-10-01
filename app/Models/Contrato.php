@@ -19,6 +19,7 @@ class Contrato extends Model
         'monto_actual',
         'periodo_actualizacion',
         'indice_actualizacion',
+        "estado",
         
     ];
 

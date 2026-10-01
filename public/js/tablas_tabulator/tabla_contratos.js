@@ -12,13 +12,14 @@ document.addEventListener('DOMContentLoaded', function() {
             paginationSize: 10,
             columns: [
                 { title: "ID", field: "id", width: 70, hozAlign: "center" },
-                { title: "Inmueble ID", field: "inmueble_id", width: 100, hozAlign: "center", headerVertical:true },
-                { title: "Fecha Inicio", field: "fecha_inicio", width: 130, hozAlign: "center", headerVertical:true },
-                { title: "Fecha Finalización", field: "fecha_finalizacion", width: 130, hozAlign: "center", headerVertical:true },
-                { title: "Monto Inicial", field: "monto_inicial", width: 120, hozAlign: "right", headerVertical:true },
-                { title: "Monto Actual", field: "monto_actual", width: 120, hozAlign: "right", headerVertical:true },
-                { title: "Periodo", field: "periodo_actualizacion", width: 110, hozAlign: "center", headerVertical:true },
-                { title: "Índice", field: "indice_actualizacion", width: 90, hozAlign: "center", headerVertical:true },
+                { title: "Inmueble ID", field: "inmueble_id", width: 100, hozAlign: "center"},
+                { title: "Fecha Inicio", field: "fecha_inicio", width: 130, hozAlign: "center"},
+                { title: "Fecha Finalización", field: "fecha_finalizacion", width: 130, hozAlign: "center"},
+                { title: "Monto Inicial", field: "monto_inicial", width: 120, hozAlign: "right"},
+                { title: "Monto Actual", field: "monto_actual", width: 120, hozAlign: "right"},
+                { title: "Periodo", field: "periodo_actualizacion", width: 110, hozAlign: "center", },
+                { title: "Índice", field: "indice_actualizacion", width: 90, hozAlign: "center", },
+                { title: "Estado", field: "estado", width: 90, hozAlign: "center"},
                
                 
             ],

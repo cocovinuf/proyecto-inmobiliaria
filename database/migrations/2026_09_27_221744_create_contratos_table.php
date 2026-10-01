@@ -25,6 +25,7 @@ return new class extends Migration
             $table->decimal('monto_actual', 12, 2);  // NUEVO CAMPO: Registra las actualizaciones del arancel
             $table->string('periodo_actualizacion');
             $table->string('indice_actualizacion');
+            $table->string('estado');
             
             
             $table->timestamps();

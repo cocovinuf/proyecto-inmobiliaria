@@ -6,6 +6,8 @@ Route::view('/','welcome')->name('welcome');
 
 Route::view('/home','home')->name('home');
 
+Route::view('/alquileres','alquileres')->name('alquileres');
+
 Route::view('/inmuebles','inmuebles')->name('inmuebles');
 
 Route::view('/personas','personas')->name('personas');
@@ -17,6 +19,8 @@ Route::view('/liquidaciones','liquidaciones')->name('liquidaciones');
 Route::view('/reparaciones','reparaciones')->name('reparaciones');
 
 Route::view('/notificaciones','notificaciones')->name('notificaciones');
+
+
 
 
 // Esto es para crear la ruta blade que va a usar tabulator para llamar al controlador de la tabla.
