@@ -8,9 +8,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CDN de Tabulator (movido al head para que cargue antes de renderizar la tabla) -->
+    <link href="https://unpkg.com/tabulator-tables@5.5.0/dist/css/tabulator_bootstrap5.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
 
+    <!-- Envoltorio principal de toda la página -->
     <div class="d-flex" id="wrapper">
         
         <!-- Sidebar / Barra Lateral -->
@@ -22,11 +25,9 @@
             <hr class="text-secondary">
             <ul class="nav nav-pills flex-column mb-auto">
                 <li class="nav-item mb-1">
-                    <!-- Ahora Contratos es un link inactivo -->
                     <a href="{{ route('contratos') }}" class="nav-link text-secondary"><i class="fa-solid fa-file-contract me-2"></i> Contratos</a>
                 </li>
                 <li class="nav-item mb-1">
-                    <!-- Inmuebles es el link activo -->
                     <a href="{{ route('inmuebles') }}" class="nav-link active text-white"><i class="fa-solid fa-house me-2"></i> Inmuebles</a>
                 </li>
                 <li class="nav-item mb-1">
@@ -41,11 +42,9 @@
                 <li class="nav-item mb-1">
                     <a href="{{ route('notificaciones') }}" class="nav-link text-secondary d-flex justify-content-between align-items-center">
                         <span><i class="fa-regular fa-bell me-2"></i> Notificaciones</span>
-                        <!-- Opcional: un pequeño badge (globo) rojo para mostrar si hay alertas sin leer -->
                         <span class="badge bg-danger rounded-pill">3</span>
                     </a>
                 </li>
-
             </ul>
             <hr class="text-secondary">
             <div class="d-flex align-items-center text-white">
@@ -57,8 +56,10 @@
             </div>
         </div>
 
+
         <!-- Contenido Principal -->
-        <div class="container-fluid p-4" style="margin-left: 260px;">
+        <!-- Cambiamos el calc() por overflow: hidden para mantener el responsive -->
+        <div class="container-fluid p-4" style="margin-left: 260px; overflow: hidden;">
             
             <!-- Cabecera de la sección -->
             <div class="d-flex justify-content-between align-items-center mb-4 pt-2">
@@ -68,9 +69,9 @@
                 </div>
                 
                 <!-- Barra de Acciones del CRUD -->
-                <div class="d-flex gap-2">
+                <div class="d-flex gap-2 flex-wrap">
                     <button class="btn btn-primary d-flex align-items-center gap-2">
-                        <i class="fa-solid fa-plus"></i> Nuevo Inmueble
+                        <i class="fa-solid fa-plus"></i> Nuevo
                     </button>
                     <button id="btn-editar" class="btn btn-outline-secondary d-flex align-items-center gap-2" disabled>
                         <i class="fa-solid fa-pen-to-square"></i> Editar
@@ -81,34 +82,21 @@
                 </div>
             </div>
 
+            <!-- Contenedor de la Tabla -->
+            <div class="card shadow-sm border-0 w-100">
+                <div class="card-body p-0">
+                    <!-- Ancla donde Tabulator inyectará la tabla -->
+                    <div id="tabla-inmuebles" data-url="{{ route('api.inmueble.datos') }}"></div>
+                </div>
+            </div>
 
+        </div> <!-- CIERRE DEL CONTENIDO PRINCIPAL -->
+    </div> <!-- CIERRE DEL WRAPPER -->
 
-        </div>
-    </div>
-
-    <!-- Script de selección de filas y habilitación de botones -->
-    <script>
-        const rows = document.querySelectorAll('#tabla-inmuebles tbody tr');
-        const btnEditar = document.getElementById('btn-editar');
-        const btnEliminar = document.getElementById('btn-eliminar');
-
-        rows.forEach(row => {
-            row.addEventListener('click', (e) => {
-                // Evita conflictos si se hace clic directamente en el botón de detalles
-                if (e.target.closest('button')) return;
-
-                rows.forEach(r => {
-                    r.classList.remove('table-primary');
-                });
-                row.classList.add('table-primary');
-
-                btnEditar.removeAttribute('disabled');
-                btnEliminar.removeAttribute('disabled');
-            });
-        });
-    </script>
-
-    <!-- Bootstrap 5 JS Bundle -->
+    <!-- Scripts -->
+    <script src="https://unpkg.com/tabulator-tables@5.5.0/dist/js/tabulator.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/tablas_tabulator/tabla_inmuebles.js') }}"></script>   
+
 </body>
 </html>

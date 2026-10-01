@@ -25,3 +25,13 @@ use App\Http\Controllers\ContratoController;
 
 // 2. Creás la ruta específica para los datos
 Route::get('/api/contratos-datos', [ContratoController::class, 'getDatosParaTabulator'])->name('api.contratos.datos');
+
+
+
+
+// 1. Importás tu controlador en la parte superior del archivo
+use App\Http\Controllers\InmuebleController;
+
+// 2. Creás la ruta específica para los datos
+Route::get('/api/inmuebles-datos', [InmuebleController::class, 'getDatosParaTabulator'])->name('api.inmueble.datos');
+

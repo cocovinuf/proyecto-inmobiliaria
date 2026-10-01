@@ -19,22 +19,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 { title: "Monto Actual", field: "monto_actual", width: 120, hozAlign: "right", headerVertical:true },
                 { title: "Periodo", field: "periodo_actualizacion", width: 110, hozAlign: "center", headerVertical:true },
                 { title: "Índice", field: "indice_actualizacion", width: 90, hozAlign: "center", headerVertical:true },
-                { title: "Duración", field: "duracion", width: 90, hozAlign: "center", headerVertical:true },
-                { 
-                    title: "Acciones", 
-                    width: 110,
-                    hozAlign: "center",
-                    headerVertical:true,
-                    formatter: function(cell, formatterParams, onRendered){
-                        return `<button class="btn btn-sm btn-light border text-primary" title="Ver detalles">
-                                    <i class="fa-solid fa-eye"></i> Detalles
-                                </button>`;
-                    },
-                    cellClick: function(e, cell){
-                        let data = cell.getRow().getData();
-                        console.log("ID seleccionado: " + data.id);
-                    }
-                }
+               
+                
             ],
         });
     }
