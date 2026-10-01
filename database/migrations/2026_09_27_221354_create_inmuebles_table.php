@@ -30,6 +30,7 @@ return new class extends Migration
             $table->integer('cantidad_ambientes');
             $table->integer('cantidad_dormitorios');
             $table->integer('cantidad_banios');
+            $table->integer('cochera');
 
             // Comodidades (Amenities) - Convertidas a booleanos con "false" por defecto[cite: 2]
             $table->boolean('quincho')->default(false);

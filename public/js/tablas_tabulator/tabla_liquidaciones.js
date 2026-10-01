@@ -1,14 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
-    
     let contenedorTabla = document.getElementById("tabla-liquidaciones");
     let rutaJson = contenedorTabla ? contenedorTabla.getAttribute("data-url") : "/api/liquidaciones-datos";
 
     var tablaLiquidaciones = new Tabulator("#tabla-liquidaciones", {
         ajaxURL: rutaJson,
-        height: "500px", 
-        layout: "fitData", 
+        height: "720px", 
         pagination: "local",
-        paginationSize: 15,
+        paginationSize: 20,
+        layout: "fitDataStretch", 
         selectableRows: 1, 
         
         // Habilitación dinámica de los botones Editar y Eliminar
@@ -28,42 +27,16 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         
         columns: [
-            { title: "ID", field: "id", width: 60, hozAlign: "center" },
-            { title: "N° Contrato", field: "contrato_id", hozAlign: "center" },
+            { title: "ID", field: "id", hozAlign: "center" },
+            { title: "ID Contrato", field: "contrato_id", hozAlign: "center" },
             { title: "Período", field: "periodo" },
             
             // Usamos formatter "money" para que se vea como moneda automáticamente
-            { 
-                title: "Alquiler", 
-                field: "monto_alquiler", 
-                formatter: "money", 
-                formatterParams: { symbol: "$", decimal: ",", thousand: ".", precision: 2 } 
-            },
-            { 
-                title: "Expensas", 
-                field: "monto_expensa", 
-                formatter: "money", 
-                formatterParams: { symbol: "$", decimal: ",", thousand: ".", precision: 2 } 
-            },
+            { title: "Alquiler", field: "monto_alquiler", formatter: "money", formatterParams: { symbol: "$", decimal: ",", thousand: ".", precision: 2 } },
+            { title: "Expensas", field: "monto_expensa", formatter: "money", formatterParams: { symbol: "$", decimal: ",", thousand: ".", precision: 2 } },
             
-            { 
-                title: "Fecha Pagado", 
-                field: "pagado", 
-                hozAlign: "center",
-                formatter: function(cell) {
-                    let valor = cell.getValue();
-                    return valor ? valor : '<span class="text-danger">Pendiente</span>';
-                }
-            },
-            { 
-                title: "Fecha Rendido", 
-                field: "rendido", 
-                hozAlign: "center",
-                formatter: function(cell) {
-                    let valor = cell.getValue();
-                    return valor ? valor : '<span class="text-warning">Pendiente</span>';
-                }
-            }
+            { title: "Fecha Pagado", field: "pagado", hozAlign: "center"},
+            { title: "Fecha Rendido", field: "rendido", hozAlign: "center",}
         ]
     });
 });

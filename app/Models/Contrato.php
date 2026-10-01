@@ -12,6 +12,7 @@ class Contrato extends Model
     protected $table = 'contratos';
 
     protected $fillable = [
+        'alias',
         'inmueble_id',
         'fecha_inicio',
         'fecha_finalizacion',

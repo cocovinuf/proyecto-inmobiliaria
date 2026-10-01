@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('inmueble_id')->constrained('inmuebles');
             
             // Datos del contrato
+            $table->string('alias');
             $table->date('fecha_inicio');
             $table->date('fecha_finalizacion');
             $table->decimal('monto_inicial', 12, 2); // Usamos decimal en vez de float para dinero

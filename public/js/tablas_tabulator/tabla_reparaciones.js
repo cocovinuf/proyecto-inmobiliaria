@@ -3,25 +3,12 @@ document.addEventListener('DOMContentLoaded', function() {
     let contenedorTabla = document.getElementById("tabla-reparaciones");
     let rutaJson = contenedorTabla ? contenedorTabla.getAttribute("data-url") : "/api/reparaciones-datos";
 
-    // Función auxiliar para dar vuelta la fecha (de YYYY-MM-DD a DD/MM/YYYY)
-    function formatearFechaLocal(cell) {
-        let valor = cell.getValue();
-        if (!valor) return '<span class="text-muted">Pendiente</span>';
-        
-        // Laravel manda la fecha casteada como string, extraemos solo la parte YYYY-MM-DD
-        let partes = valor.split('T')[0].split('-'); 
-        if (partes.length === 3) {
-            return `${partes[2]}/${partes[1]}/${partes[0]}`;
-        }
-        return valor;
-    }
-
     var tablaReparaciones = new Tabulator("#tabla-reparaciones", {
         ajaxURL: rutaJson,
-        height: "500px", 
-        layout: "fitData", 
+        height: "720px", 
         pagination: "local",
-        paginationSize: 15,
+        paginationSize: 20,
+        layout: "fitDataStretch", 
         selectableRows: 1, 
         
         // Habilitación dinámica de los botones
@@ -42,47 +29,13 @@ document.addEventListener('DOMContentLoaded', function() {
         
         columns: [
             { title: "ID", field: "id", width: 60, hozAlign: "center" },
-            
-            // Relación con Inmueble (Leemos el objeto anidado)
-            { 
-                title: "Inmueble", 
-                field: "inmueble", 
-                formatter: function(cell) {
-                    let inm = cell.getValue();
-                    // Mostramos el alias, o la calle si no tiene alias
-                    return inm ? (inm.alias || inm.calle + " " + inm.numeracion) : "Sin asignar";
-                }
-            },
-            
+            { title: "Inmueble_id", field: "inmueble_id"},
             { title: "Descripción", field: "descripcion", width: 250 }, // Más ancha para el texto
+            { title: "Inicio", field: "fecha_inicio", hozAlign: "center",},
+            { title: "Finalización", field: "fecha_finalizacion", hozAlign: "center",},
+            { title: "Costo", field: "monto", formatter: "money", formatterParams: { symbol: "$", decimal: ",", thousand: ".", precision: 2 }},
+            {title: "Comprobante", field: "comprobante",hozAlign: "center"}
             
-            // Fechas formateadas
-            { title: "Inicio", field: "fecha_inicio", hozAlign: "center", formatter: formatearFechaLocal },
-            { title: "Finalización", field: "fecha_finalizacion", hozAlign: "center", formatter: formatearFechaLocal },
-            
-            // Monto en moneda
-            { 
-                title: "Costo", 
-                field: "monto", 
-                formatter: "money", 
-                formatterParams: { symbol: "$", decimal: ",", thousand: ".", precision: 2 } 
-            },
-            
-            // Botón visual para el comprobante
-            { 
-                title: "Comprobante", 
-                field: "comprobante", 
-                hozAlign: "center",
-                formatter: function(cell) {
-                    let archivo = cell.getValue();
-                    if (archivo) {
-                        return `<a href="/storage/${archivo}" target="_blank" class="btn btn-sm btn-outline-secondary py-0" style="font-size: 0.8rem;">
-                                    <i class="fa-solid fa-file-invoice"></i> Ver
-                                </a>`;
-                    }
-                    return '<span class="text-muted">Sin adjunto</span>';
-                }
-            }
         ]
     });
 });

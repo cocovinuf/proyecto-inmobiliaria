@@ -7,19 +7,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
         var table = new Tabulator("#tabla-contratos", {
             ajaxURL: tablaContenedor.dataset.url,
-            layout: "fitColumns", // Ajusta las columnas al ancho de la tabla
+            height: "60%", 
             pagination: "local",
-            paginationSize: 10,
+            paginationSize: 20,
+            layout: "fitData", 
+            renderHorizontal:"virtual",
             columns: [
-                { title: "ID", field: "id", width: 70, hozAlign: "center" },
-                { title: "Inmueble ID", field: "inmueble_id", width: 100, hozAlign: "center"},
-                { title: "Fecha Inicio", field: "fecha_inicio", width: 130, hozAlign: "center"},
-                { title: "Fecha Finalización", field: "fecha_finalizacion", width: 130, hozAlign: "center"},
-                { title: "Monto Inicial", field: "monto_inicial", width: 120, hozAlign: "right"},
-                { title: "Monto Actual", field: "monto_actual", width: 120, hozAlign: "right"},
-                { title: "Periodo", field: "periodo_actualizacion", width: 110, hozAlign: "center", },
-                { title: "Índice", field: "indice_actualizacion", width: 90, hozAlign: "center", },
-                { title: "Estado", field: "estado", width: 90, hozAlign: "center"},
+                { title: "ID", field: "id", headerFilter: "input" },
+                { title: "Alias", field: "alias", width: 100, hozAlign: "center",headerFilter: "input"},
+                { title: "Inmueble", field: "inmueble_id", hozAlign: "center"},
+                { title: "Propietario", field: "datos_propietario", hozAlign: "center"},
+                { title: "Inquilino", field: "datos_inquilino", hozAlign: "center"},
+                { title: "Garante", field: "datos_garante", hozAlign: "center"},
+                { title: "Inicio", field: "fecha_inicio",  hozAlign: "center",headerFilter: "input"},
+                { title: "Finalización", field: "fecha_finalizacion",  hozAlign: "center",headerFilter: "input"},
+                { title: "Monto Inicial", field: "monto_inicial",  hozAlign: "right",headerFilter: "input"},
+                { title: "Monto Actual", field: "monto_actual",  hozAlign: "right",headerFilter: "input"},
+                { title: "Periodo", field: "periodo_actualizacion",  hozAlign: "center",headerFilter: "input" },
+                { title: "Índice", field: "indice_actualizacion",  hozAlign: "center",headerFilter: "input" },
+                { title: "Estado", field: "estado",  hozAlign: "center",headerFilter: "input"},
+                { title: "Historico Aranceles", field: "historico_aranceles",  hozAlign: "center"},
                
                 
             ],

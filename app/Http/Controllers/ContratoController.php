@@ -11,7 +11,7 @@ class ContratoController extends Controller
     public function getDatosParaTabulator()
     {
         // Trae todos los contratos de la base de datos
-        $contratos = Contrato::all(); 
+        $contratos = Contrato::with(['inmueble', 'inquilinos', 'garantes'])->get();
         
         // Los devuelve en formato JSON puro
         return response()->json($contratos); 

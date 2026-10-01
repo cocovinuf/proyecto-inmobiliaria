@@ -4,8 +4,8 @@ let rutaJsonPersonas = contenedorTablaPersonas ? contenedorTablaPersonas.getAttr
 
 var tablaPersonas = new Tabulator("#tabla-personas", {
     ajaxURL: rutaJsonPersonas,
-    height: "500px", 
-    layout: "fitData", 
+    height: "720px", 
+    layout: "fitDataStretch", 
     pagination: "local",
     paginationSize: 15,
     selectableRows: 1, 
@@ -38,24 +38,7 @@ var tablaPersonas = new Tabulator("#tabla-personas", {
         { title: "Titular", field: "titular_cuenta" },
         { title: "Cuenta N°", field: "num_cuenta_bancaria" },
         { title: "CBU", field: "cbu" }, 
-
-
-        // Botón visual para la documentación adjunta
-        { 
-            title: "Documentación", 
-            field: "documentacion", 
-            hozAlign: "center",
-            formatter: function(cell) {
-                let archivo = cell.getValue();
-                // Si hay un archivo cargado, genera un botón para abrirlo en otra pestaña.
-                // Asume que los archivos están guardados en el disco public de Laravel.
-                if (archivo) {
-                    return `<a href="/storage/${archivo}" target="_blank" class="btn btn-sm btn-outline-primary py-0" style="font-size: 0.8rem;">
-                                <i class="fa-solid fa-file-pdf"></i> Ver
-                            </a>`;
-                }
-                return '<span class="text-muted">Sin adjunto</span>';
-            }
-        }
+        { title: "Documentación", field: "documentacion"},
+        
     ],
 });

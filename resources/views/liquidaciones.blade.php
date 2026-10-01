@@ -13,6 +13,7 @@
 </head>
 <body class="bg-light">
 
+    <!-- Contenedor Principal en Flexbox para separar Sidebar y Contenido -->
     <div class="d-flex" id="wrapper">
         
         <!-- Sidebar / Barra Lateral -->
@@ -22,12 +23,11 @@
                 <span class="fs-5 fw-bold">InmoGestión</span>
             </a>
             <hr class="text-secondary">
+            
             <ul class="nav nav-pills flex-column mb-auto">
-
                 <li class="nav-item mb-1">
                     <a href="{{ route('alquileres') }}" class="nav-link text-secondary"><i class="fa-solid fa-key me-2"></i> Alquileres</a>
                 </li>
-
                 <li class="nav-item mb-1">
                     <a href="{{ route('contratos') }}" class="nav-link text-secondary"><i class="fa-solid fa-file-contract me-2"></i> Contratos</a>
                 </li>
@@ -37,8 +37,8 @@
                 <li class="nav-item mb-1">
                     <a href="{{ route('personas') }}" class="nav-link text-secondary"><i class="fa-solid fa-users me-2"></i> Personas</a>
                 </li>
+                <!-- Liquidaciones como link activo -->
                 <li class="nav-item mb-1">
-                    <!-- Liquidaciones es el link activo -->
                     <a href="{{ route('liquidaciones') }}" class="nav-link active text-white"><i class="fa-solid fa-file-invoice-dollar me-2"></i> Liquidaciones</a>
                 </li>
                 <li class="nav-item mb-1">
@@ -51,6 +51,7 @@
                     </a>
                 </li>
             </ul>
+
             <hr class="text-secondary">
             <div class="d-flex align-items-center text-white">
                 <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold me-2" style="width: 35px; height: 35px;">EA</div>
@@ -61,7 +62,7 @@
             </div>
         </div>
 
-        <!-- Contenido Principal con desbordamiento oculto para mantener la tabla contenida -->
+        <!-- Contenido Principal (Margen izquierdo para compensar el sidebar fijo) -->
         <div class="container-fluid p-4" style="margin-left: 260px; overflow: hidden;">
             
             <!-- Cabecera de la sección -->
@@ -72,7 +73,7 @@
                 </div>
                 
                 <!-- Barra de Acciones del CRUD -->
-                <div class="d-flex gap-2 flex-wrap">
+                <div class="d-flex gap-2">
                     <button class="btn btn-primary d-flex align-items-center gap-2">
                         <i class="fa-solid fa-plus"></i> Nueva Liquidación
                     </button>
@@ -85,13 +86,13 @@
                 </div>
             </div>
 
-            <!-- Contenedor de la Tabla -->
-            <div class="card shadow-sm border-0 w-100">
-                <div class="card-body p-0">
-                    <!-- Ancla donde Tabulator inyectará la tabla -->
-                    <div id="tabla-liquidaciones" data-url="{{ route('api.liquidacion.datos') }}"></div>
-                </div>
+        <!-- Contenedor de la Tabla -->
+        <div class="card shadow-sm border-0 w-100">
+            <div class="card-body p-0">
+                <!-- Ancla donde Tabulator inyectará la tabla con un ancho explícito del 100% -->
+                <div id="tabla-liquidaciones" class="w-100" data-url="{{ route('api.liquidacion.datos') }}"></div>
             </div>
+        </div>
 
         </div> <!-- Cierre del Contenido Principal -->
     </div> <!-- Cierre del Wrapper -->

@@ -25,6 +25,7 @@ class Inmueble extends Model
         'cantidad_ambientes',
         'cantidad_dormitorios',
         'cantidad_banios',
+        'cochera',
         'quincho',
         'parrilla',
         'sum',
