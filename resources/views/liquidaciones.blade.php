@@ -8,6 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CDN de Tabulator -->
+    <link href="https://unpkg.com/tabulator-tables@5.5.0/dist/css/tabulator_bootstrap5.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
 
@@ -38,11 +40,10 @@
                     <a href="{{ route('reparaciones') }}" class="nav-link text-secondary"><i class="fa-solid fa-wrench me-2"></i> Reparaciones</a>
                 </li>
                 <li class="nav-item mb-1">
-                        <a href="{{ route('notificaciones') }}" class="nav-link text-secondary d-flex justify-content-between align-items-center">
-                            <span><i class="fa-regular fa-bell me-2"></i> Notificaciones</span>
-                            <!-- Opcional: un pequeño badge (globo) rojo para mostrar si hay alertas sin leer -->
-                            <span class="badge bg-danger rounded-pill">3</span>
-                        </a>
+                    <a href="{{ route('notificaciones') }}" class="nav-link text-secondary d-flex justify-content-between align-items-center">
+                        <span><i class="fa-regular fa-bell me-2"></i> Notificaciones</span>
+                        <span class="badge bg-danger rounded-pill">3</span>
+                    </a>
                 </li>
             </ul>
             <hr class="text-secondary">
@@ -55,8 +56,8 @@
             </div>
         </div>
 
-        <!-- Contenido Principal -->
-        <div class="container-fluid p-4" style="margin-left: 260px;">
+        <!-- Contenido Principal con desbordamiento oculto para mantener la tabla contenida -->
+        <div class="container-fluid p-4" style="margin-left: 260px; overflow: hidden;">
             
             <!-- Cabecera de la sección -->
             <div class="d-flex justify-content-between align-items-center mb-4 pt-2">
@@ -66,7 +67,7 @@
                 </div>
                 
                 <!-- Barra de Acciones del CRUD -->
-                <div class="d-flex gap-2">
+                <div class="d-flex gap-2 flex-wrap">
                     <button class="btn btn-primary d-flex align-items-center gap-2">
                         <i class="fa-solid fa-plus"></i> Nueva Liquidación
                     </button>
@@ -79,33 +80,21 @@
                 </div>
             </div>
 
+            <!-- Contenedor de la Tabla -->
+            <div class="card shadow-sm border-0 w-100">
+                <div class="card-body p-0">
+                    <!-- Ancla donde Tabulator inyectará la tabla -->
+                    <div id="tabla-liquidaciones" data-url="{{ route('api.liquidacion.datos') }}"></div>
+                </div>
+            </div>
 
-        </div>
-    </div>
+        </div> <!-- Cierre del Contenido Principal -->
+    </div> <!-- Cierre del Wrapper -->
 
-    <!-- Script de selección de filas y habilitación de botones -->
-    <script>
-        const rows = document.querySelectorAll('#tabla-liquidaciones tbody tr');
-        const btnEditar = document.getElementById('btn-editar');
-        const btnEliminar = document.getElementById('btn-eliminar');
-
-        rows.forEach(row => {
-            row.addEventListener('click', (e) => {
-                // Evita conflictos si se hace clic directamente en el botón de detalles
-                if (e.target.closest('button')) return;
-
-                rows.forEach(r => {
-                    r.classList.remove('table-primary');
-                });
-                row.classList.add('table-primary');
-
-                btnEditar.removeAttribute('disabled');
-                btnEliminar.removeAttribute('disabled');
-            });
-        });
-    </script>
-
-    <!-- Bootstrap 5 JS Bundle -->
+    <!-- Scripts -->
+    <script src="https://unpkg.com/tabulator-tables@5.5.0/dist/js/tabulator.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Tu script que inicializa la tabla -->
+    <script src="{{ asset('js/tablas_tabulator/tabla_liquidaciones.js') }}"></script> 
 </body>
 </html>

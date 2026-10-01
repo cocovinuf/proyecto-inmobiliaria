@@ -79,6 +79,16 @@
                 </div>
             </div>
 
+    <!-- Ancla donde Tabulator inyectará la tabla, pasando la ruta dinámica -->
+    <div id="tabla-personas" data-url="{{ route('api.persona.datos') }}"></div>
+
+    <!-- CDN de Tabulator (con el tema para Bootstrap 5 que venimos usando) -->
+    <link href="https://unpkg.com/tabulator-tables@5.5.0/dist/css/tabulator_bootstrap5.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/tabulator-tables@5.5.0/dist/js/tabulator.min.js"></script>
+
+    <!-- Tu script que inicializa la tabla -->
+    <script src="{{ asset('js/tablas_tabulator/tabla_personas.js') }}"></script>   
+
 
 
         </div>
