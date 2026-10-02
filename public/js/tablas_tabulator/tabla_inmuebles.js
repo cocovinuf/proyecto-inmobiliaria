@@ -7,14 +7,15 @@ var tablaInmuebles = new Tabulator("#tabla-inmuebles", {
     // Eliminamos responsiveLayout para que no oculte las columnas
     
     columns: [
-        { title: "ID", field: "id", hozAlign: "center" },
-        {title: "ID Propietario",field: "propietario_id"},
+        { title: "ID", field: "id", hozAlign: "center", headerFilter:"number" },
+        {title: "Propietario",field: "propietario", headerFilter:"number"},
         { title: "Alias", field: "alias", headerFilter: "input"  },
         { title: "Tipo", field: "tipo" , headerFilter: "input" },
         { title: "Edificio", field: "nombre_edificio" , headerFilter: "input" },
-        { title: "Dirección", field: "direccion", headerFilter: "input" },
+        { title: "Calle", field: "calle", headerFilter: "input" },
+        { title: "Numeracion", field: "numeracion", headerFilter: "input" },
         { title: "UF", field: "unidad_funcional" , headerFilter: "input" },
-        { title: "Sup.", field: "superficie" , headerFilter: "input" },
+        { title: "Sup.", field: "superficie" , sorter:"number", headerFilter:"number"},
         { title: "Amb.", field: "cantidad_ambientes", hozAlign: "center", headerFilter:"number" },
         { title: "Dorm.", field: "cantidad_dormitorios", hozAlign: "center" , headerFilter:"number"},
         { title: "Baños", field: "cantidad_banios", hozAlign: "center" , headerFilter:"number"},

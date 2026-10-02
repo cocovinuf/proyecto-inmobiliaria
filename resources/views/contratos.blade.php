@@ -24,9 +24,7 @@
           
                 <ul class="nav nav-pills flex-column mb-auto">
                     
-                    <li class="nav-item mb-1">
-                        <a href="{{ route('alquileres') }}" class="nav-link text-secondary"><i class="fa-solid fa-key me-2"></i> Alquileres</a>
-                    </li>
+
                     <li class="nav-item mb-1">
                         <a href="#" class="nav-link active text-white"><i class="fa-solid fa-file-contract me-2"></i> Contratos</a>
                     </li>

@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         
         columns: [
-            { title: "ID", field: "id", width: 60, hozAlign: "center" },
+            { title: "ID", field: "id", hozAlign: "center" },
             { title: "Inmueble_id", field: "inmueble_id"},
             { title: "Descripción", field: "descripcion", width: 250 }, // Más ancha para el texto
             { title: "Inicio", field: "fecha_inicio", hozAlign: "center",},

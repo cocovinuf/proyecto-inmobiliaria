@@ -27,15 +27,15 @@ var tablaPersonas = new Tabulator("#tabla-personas", {
     },
     
     columns: [
-        { title: "ID", field: "id", width: 60, hozAlign: "center" },
+        { title: "ID", field: "id",  hozAlign: "center" , headerFilter: "input" },
         
         // Datos Personales
-        { title: "Apellido", field: "apellido" },
-        { title: "Nombre", field: "nombre" },
-        { title: "DNI", field: "dni" },
-        { title: "Teléfono", field: "num_telefono" },
-        { title: "Banco", field: "nombre_banco" },
-        { title: "Titular", field: "titular_cuenta" },
+        { title: "Apellido", field: "apellido", headerFilter: "input"},
+        { title: "Nombre", field: "nombre", headerFilter: "input" },
+        { title: "DNI", field: "dni", headerFilter: "input" },
+        { title: "Teléfono", field: "num_telefono" , headerFilter: "input" },
+        { title: "Banco", field: "nombre_banco" , headerFilter: "input"},
+        { title: "Titular", field: "titular_cuenta" , headerFilter: "input"},
         { title: "Cuenta N°", field: "num_cuenta_bancaria" },
         { title: "CBU", field: "cbu" }, 
         { title: "Documentación", field: "documentacion"},

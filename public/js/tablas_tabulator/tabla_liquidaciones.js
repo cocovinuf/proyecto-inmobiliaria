@@ -36,7 +36,9 @@ document.addEventListener('DOMContentLoaded', function() {
             { title: "Expensas", field: "monto_expensa", formatter: "money", formatterParams: { symbol: "$", decimal: ",", thousand: ".", precision: 2 } },
             
             { title: "Fecha Pagado", field: "pagado", hozAlign: "center"},
-            { title: "Fecha Rendido", field: "rendido", hozAlign: "center",}
+            { title: "Fecha Rendido", field: "rendido", hozAlign: "center",},
+            { title: "Arancel Administracion", field: "arancel", formatter: "money", formatterParams: { symbol: "$", decimal: ",", thousand: ".", precision: 2 } },
+            { title: "A rendir", field: "rendicion", formatter: "money", formatterParams: { symbol: "$", decimal: ",", thousand: ".", precision: 2 } },
         ]
     });
 });
