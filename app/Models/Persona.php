@@ -16,6 +16,8 @@ class Persona extends Model
         'apellido',
         'nombre',
         'dni',
+        'cuit',
+        'cuil',
         'num_telefono',
         'num_cuenta_bancaria',
         'cbu',

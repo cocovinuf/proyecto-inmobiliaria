@@ -56,3 +56,7 @@ Route::get('/api/liquidaciones-datos', [LiquidacionController::class, 'getDatosP
 
 use App\Http\Controllers\ReparacionController;
 Route::get('/api/reparaciones-datos', [ReparacionController::class, 'getDatosParaTabulator'])->name('api.reparacion.datos');
+
+
+// Esta es la ruta para el formulario de carga de nuevas personas
+Route::post('/personas', [PersonaController::class, 'store'])->name('personas.store');

@@ -16,4 +16,20 @@ class PersonaController extends Controller
         // Los devuelve en formato JSON puro
         return response()->json($personas); 
     }
+
+
+
+
+    // La funcion que va a ejecutar la funcion de guardar el formulario en la db
+    public function store(Request $request)
+    {
+        // Valida y guarda todo lo que viene de los 'name' del formulario
+        Persona::create($request->all());
+
+        // Redirige de vuelta a la tabla con un mensaje o respuesta
+        return redirect()->back()->with('success', 'Persona creada con éxito');
+    }
+
+
+
 }
