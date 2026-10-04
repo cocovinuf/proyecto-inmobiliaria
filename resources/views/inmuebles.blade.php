@@ -121,172 +121,43 @@
         </div>
     </div>
 
-    <!-- Modal Editar Persona -->
-    <div class="modal fade" id="modalEditarPersona" tabindex="-1" aria-hidden="true">
+    <!-- Modal Editar Inmueble -->
+    <div class="modal fade" id="modalEditarInmueble" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Editar Persona Existente</h5>
+                    <h5 class="modal-title">Editar Inmueble Existente</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('personas.crud') }}" method="POST">
-                        @csrf 
-                        <input type="hidden" name="accion" value="editar">
-                        <input type="hidden" id="edit_id" name="id">
+                    
+                    
+                    @include('vistas_parciales.formulario_editar_inmueble', ['personas' => $personas])
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="edit_apellido" class="form-label fw-bold">Apellido</label>
-                                <input type="text" class="form-control" id="edit_apellido" name="apellido" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="edit_nombre" class="form-label fw-bold">Nombre</label>
-                                <input type="text" class="form-control" id="edit_nombre" name="nombre" required>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label for="edit_dni" class="form-label fw-bold">DNI</label>
-                                <input type="text" class="form-control" id="edit_dni" name="dni" required>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="edit_cuil" class="form-label fw-bold">CUIL</label>
-                                <input type="text" class="form-control" id="edit_cuil" name="cuil">
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="edit_cuit" class="form-label fw-bold">CUIT</label>
-                                <input type="text" class="form-control" id="edit_cuit" name="cuit">
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="edit_num_telefono" class="form-label fw-bold">Número de Teléfono</label>
-                                <input type="text" class="form-control" id="edit_num_telefono" name="num_telefono">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="edit_num_cuenta_bancaria" class="form-label fw-bold">N° de Cuenta Bancaria</label>
-                                <input type="text" class="form-control" id="edit_num_cuenta_bancaria" name="num_cuenta_bancaria">
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="edit_cbu" class="form-label fw-bold">CBU</label>
-                                <input type="text" class="form-control" id="edit_cbu" name="cbu">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="edit_nombre_banco" class="form-label fw-bold">Banco</label>
-                                <input type="text" class="form-control" id="edit_nombre_banco" name="nombre_banco">
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-12 mb-3">
-                                <label for="edit_titular_cuenta" class="form-label fw-bold">Titular de la cuenta</label>
-                                <input type="text" class="form-control" id="edit_titular_cuenta" name="titular_cuenta">
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-12 mb-4">
-                                <label for="edit_documentacion" class="form-label fw-bold">Link de Google Drive para Documentación</label>
-                                <input type="text" class="form-control" id="edit_documentacion" name="documentacion" placeholder="https://drive.google.com/...">
-                            </div>
-                        </div>
-
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-success btn-lg">Editar Persona</button>
-                        </div>
-                    </form>                        
                 </div>
             </div>
         </div>
     </div>
 
 
-        <!-- Modal Eliminar Persona -->
-    <div class="modal fade" id="modalEliminarPersona" tabindex="-1" aria-hidden="true">
+        <!-- Modal Eliminar Inmueble -->
+    <div class="modal fade" id="modalEliminarInmueble" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Eliminar Persona</h5>
+                    <h5 class="modal-title">Eliminar Inmueble</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('personas.crud') }}" method="POST">
-                        @csrf 
-                        <input type="hidden" name="accion" value="eliminar">
-                        <input type="hidden" id="eliminar_id" name="id">
+                    
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="eliminar_apellido" class="form-label fw-bold">Apellido</label>
-                                <input type="text" class="form-control" id="eliminar_apellido" name="apellido" disabled>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="eliminar_nombre" class="form-label fw-bold">Nombre</label>
-                                <input type="text" class="form-control" id="eliminar_nombre" name="nombre" disabled>
-                            </div>
-                        </div>
+                    @include('vistas_parciales.formulario_eliminar_inmueble', ['personas' => $personas])
 
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label for="eliminar_dni" class="form-label fw-bold">DNI</label>
-                                <input type="text" class="form-control" id="eliminar_dni" name="dni" disabled>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="eliminar_cuil" class="form-label fw-bold">CUIL</label>
-                                <input type="text" class="form-control" id="eliminar_cuil" name="cuil" disabled>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="eliminar_cuit" class="form-label fw-bold">CUIT</label>
-                                <input type="text" class="form-control" id="eliminar_cuit" name="cuit" disabled>
-                            </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="eliminar_num_telefono" class="form-label fw-bold">Número de Teléfono</label>
-                                <input type="text" class="form-control" id="eliminar_num_telefono" name="num_telefono" disabled>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="eliminar_num_cuenta_bancaria" class="form-label fw-bold">N° de Cuenta Bancaria</label>
-                                <input type="text" class="form-control" id="eliminar_num_cuenta_bancaria" name="num_cuenta_bancaria" disabled>
-                            </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="eliminar_cbu" class="form-label fw-bold">CBU</label>
-                                <input type="text" class="form-control" id="eliminar_cbu" name="cbu" disabled>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="eliminar_nombre_banco" class="form-label fw-bold">Banco</label>
-                                <input type="text" class="form-control" id="eliminar_nombre_banco" name="nombre_banco" disabled>
-                            </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-md-12 mb-3">
-                                <label for="eliminar_titular_cuenta" class="form-label fw-bold">Titular de la cuenta</label>
-                                <input type="text" class="form-control" id="eliminar_titular_cuenta" name="titular_cuenta" disabled>
-                            </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-md-12 mb-4">
-                                <label for="eliminar_documentacion" class="form-label fw-bold">Link de Google Drive para Documentación</label>
-                                <input type="text" class="form-control" id="eliminar_documentacion" name="documentacion" placeholder="https://drive.google.com/..." disabled>
-                            </div>
-                        </div>
 
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-danger btn-lg">Eliminar Persona</button>
-                        </div>
-                    </form>                        
                 </div>
             </div>
         </div>

@@ -34,6 +34,7 @@ class InmuebleController extends Controller
             $propietarioNombre = $inmueble->propietario->nombre ?? null;
             $propietarioApellido = $inmueble->propietario->apellido ?? null;
             $propietarioDni = $inmueble->propietario->dni ?? null;
+            $propietarioId = $inmueble->propietario->id ?? null;
 
             $nombre_completo_propietario = $propietarioApellido . " " . $propietarioNombre;
 
@@ -53,7 +54,25 @@ class InmuebleController extends Controller
                 'cantidad_banios' => $cantidadBanios,
                 'cochera' => $cochera,
                 'propietario' => $nombre_completo_propietario,
+                'propietario_id' => $propietarioId,
                 'propietario_dni' => $propietarioDni,
+                'quincho' => $inmueble->quincho,
+                'parrilla' => $inmueble->parrilla,
+                'sum' => $inmueble->sum,
+                'piscina' => $inmueble->piscina,
+                'gimnasio' => $inmueble->gimnasio,
+                'solarium' => $inmueble->solarium,
+                'vigilancia' => $inmueble->vigilancia,
+                'jardin' => $inmueble->jardin,
+                'lavanderia' => $inmueble->lavanderia,
+                'terraza' => $inmueble->terraza,
+                'cancha_de_deportes' => $inmueble->cancha_de_deportes,
+                'sauna' => $inmueble->sauna,
+                'sala_de_reuniones' => $inmueble->sala_de_reuniones,
+                'lockers_de_paqueteria' => $inmueble->lockers_de_paqueteria,
+                'espacio_coworking' => $inmueble->espacio_coworking,
+                'sala_de_juegos' => $inmueble->sala_de_juegos,
+
             ];
         });
 
@@ -79,39 +98,35 @@ class InmuebleController extends Controller
 
 
     // La funcion que va a ejecutar la funcion de guardar el formulario en la db
-    public function store(Request $request)
-    {
+   public function store(Request $request)
+{
+    $amenities = [
+        'quincho', 'parrilla', 'sum', 'piscina', 'gimnasio', 'solarium',
+        'vigilancia', 'jardin', 'lavanderia', 'terraza', 'cancha_de_deportes',
+        'sauna', 'sala_de_reuniones', 'lockers_de_paqueteria', 'espacio_coworking', 'sala_de_juegos'
+    ];
 
-        if( $request->input('accion') == 'crear') {
-            // Valida y guarda todo lo que viene de los 'name' del formulario
-            Inmueble::create($request->all());
+    // 1. Sacamos lo que no es columna: _token, accion, id
+    $data = $request->except(['_token', 'accion', 'id']);
 
-            // Redirige de vuelta a la tabla con un mensaje o respuesta
-            return redirect()->back()->with('success', 'Inmueble creado con éxito');
-        }elseif( $request->input('accion') == 'editar') {
-
-            // 1. Buscamos a la persona por su ID (si no la encuentra, lanza un error 404 automáticamente)
-            $inmueble = Inmueble::findOrFail($request->input('id'));
-            
-            // 2. Actualizamos los datos con todo lo que viene del formulario
-            $inmueble->update($request->all());
-
-            // 3. Redirigimos de vuelta con un mensaje de éxito
-            return redirect()->back()->with('success', 'Inmueble actualizado correctamente.');
-
-        }elseif( $request->input('accion') == 'eliminar') {
-
-            // 1. Buscamos a la persona por su ID (si no la encuentra, lanza un error 404 automáticamente)
-            $inmueble = Inmueble::findOrFail($request->input('id'));
-            
-            // 2. Eliminamos el registro
-            $inmueble->delete();
-
-            // 3. Redirigimos de vuelta con un mensaje de éxito
-            return redirect()->back()->with('success', 'Inmueble eliminado correctamente.');
-        }
-
+    // 2. Normalizamos: tildado=1, no venido=0
+    foreach ($amenities as $amenity) {
+        $data[$amenity] = $request->has($amenity) ? 1 : 0;
     }
+
+    if ($request->input('accion') == 'crear') {
+        Inmueble::create($data);
+        return redirect()->back()->with('success', 'Inmueble creado con éxito');
+    } elseif ($request->input('accion') == 'editar') {
+        $inmueble = Inmueble::findOrFail($request->input('id'));
+        $inmueble->update($data);
+        return redirect()->back()->with('success', 'Inmueble actualizado correctamente.');
+    } elseif ($request->input('accion') == 'eliminar') {
+        $inmueble = Inmueble::findOrFail($request->input('id'));
+        $inmueble->delete();
+        return redirect()->back()->with('success', 'Inmueble eliminado correctamente.');
+    }
+}
 
 
 

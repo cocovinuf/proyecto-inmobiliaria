@@ -103,97 +103,97 @@
     <div class="row mb-4">
         <div class="col-md-4 mb-2">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="quincho" id="quincho">
+                <input class="form-check-input" type="checkbox" name="quincho" id="quincho" value="1">
                 <label class="form-check-label fw-semibold" for="quincho">Quincho</label>
             </div>
         </div>
         <div class="col-md-4 mb-2">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="parrilla" id="parrilla">
+                <input class="form-check-input" type="checkbox" name="parrilla" id="parrilla" value="1">
                 <label class="form-check-label fw-semibold" for="parrilla">Parrilla</label>
             </div>
         </div>
         <div class="col-md-4 mb-2">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="sum" id="sum">
+                <input class="form-check-input" type="checkbox" name="sum" id="sum" value="1">
                 <label class="form-check-label fw-semibold" for="sum">SUM</label>
             </div>
         </div>
         <div class="col-md-4 mb-2">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="piscina" id="piscina">
+                <input class="form-check-input" type="checkbox" name="piscina" id="piscina" value="1">
                 <label class="form-check-label fw-semibold" for="piscina">Piscina</label>
             </div>
         </div>
         <div class="col-md-4 mb-2">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="gimnasio" id="gimnasio">
+                <input class="form-check-input" type="checkbox" name="gimnasio" id="gimnasio" value="1">
                 <label class="form-check-label fw-semibold" for="gimnasio">Gimnasio</label>
             </div>
         </div>
         <div class="col-md-4 mb-2">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="solarium" id="solarium">
+                <input class="form-check-input" type="checkbox" name="solarium" id="solarium" value="1">
                 <label class="form-check-label fw-semibold" for="solarium">Solarium</label>
             </div>
         </div>
         <div class="col-md-4 mb-2">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="vigilancia" id="vigilancia">
+                <input class="form-check-input" type="checkbox" name="vigilancia" id="vigilancia" value="1">
                 <label class="form-check-label fw-semibold" for="vigilancia">Vigilancia</label>
             </div>
         </div>
         <div class="col-md-4 mb-2">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="jardin" id="jardin">
+                <input class="form-check-input" type="checkbox" name="jardin" id="jardin" value="1">
                 <label class="form-check-label fw-semibold" for="jardin">Jardín</label>
             </div>
         </div>
         <div class="col-md-4 mb-2">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="lavanderia" id="lavanderia">
+                <input class="form-check-input" type="checkbox" name="lavanderia" id="lavanderia" value="1">
                 <label class="form-check-label fw-semibold" for="lavanderia">Lavandería</label>
             </div>
         </div>
         <div class="col-md-4 mb-2">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="terraza" id="terraza">
+                <input class="form-check-input" type="checkbox" name="terraza" id="terraza" value="1">
                 <label class="form-check-label fw-semibold" for="terraza">Terraza</label>
             </div>
         </div>
         <div class="col-md-4 mb-2">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="cancha_de_deportes" id="cancha_de_deportes">
+                <input class="form-check-input" type="checkbox" name="cancha_de_deportes" id="cancha_de_deportes" value="1">
                 <label class="form-check-label fw-semibold" for="cancha_de_deportes">Cancha de Deportes</label>
             </div>
         </div>
         <div class="col-md-4 mb-2">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="sauna" id="sauna">
+                <input class="form-check-input" type="checkbox" name="sauna" id="sauna" value="1">
                 <label class="form-check-label fw-semibold" for="sauna">Sauna</label>
             </div>
         </div>
         <div class="col-md-4 mb-2">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="sala_de_reuniones" id="sala_de_reuniones">
+                <input class="form-check-input" type="checkbox" name="sala_de_reuniones" id="sala_de_reuniones" value="1">
                 <label class="form-check-label fw-semibold" for="sala_de_reuniones">Sala de Reuniones</label>
             </div>
         </div>
         <div class="col-md-4 mb-2">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="lockers_de_paqueteria" id="lockers_de_paqueteria">
+                <input class="form-check-input" type="checkbox" name="lockers_de_paqueteria" id="lockers_de_paqueteria" value="1">
                 <label class="form-check-label fw-semibold" for="lockers_de_paqueteria">Lockers de Paquetería</label>
             </div>
         </div>
         <div class="col-md-4 mb-2">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="espacio_coworking" id="espacio_coworking">
+                <input class="form-check-input" type="checkbox" name="espacio_coworking" id="espacio_coworking" value="1">
                 <label class="form-check-label fw-semibold" for="espacio_coworking">Espacio de Coworking</label>
             </div>
         </div>
         <div class="col-md-4 mb-2">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="sala_de_juegos" id="sala_de_juegos">
+                <input class="form-check-input" type="checkbox" name="sala_de_juegos" id="sala_de_juegos" value="1">
                 <label class="form-check-label fw-semibold" for="sala_de_juegos">Sala de Juegos</label>
             </div>
         </div>
