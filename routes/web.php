@@ -46,6 +46,8 @@ use App\Http\Controllers\PersonaController;
 
 // 2. Creás la ruta específica para los datos
 Route::get('/api/personas-datos', [PersonaController::class, 'getDatosParaTabulator'])->name('api.persona.datos');
+// Esta es la ruta para los formularios de Personas
+Route::post('/personas', [PersonaController::class, 'store'])->name('personas.crud');
 
 
 
@@ -58,5 +60,12 @@ use App\Http\Controllers\ReparacionController;
 Route::get('/api/reparaciones-datos', [ReparacionController::class, 'getDatosParaTabulator'])->name('api.reparacion.datos');
 
 
-// Esta es la ruta para el formulario de carga de nuevas personas
-Route::post('/personas', [PersonaController::class, 'store'])->name('personas.store');
+
+
+
+//Esta es la ruta para los formularios de Inmuebles
+// Esta es la ruta que atiende cuando entras a /inmuebles
+Route::get('/inmuebles', [InmuebleController::class, 'index'])->name('inmuebles');
+
+// Y tu ruta POST para guardar/procesar:
+Route::post('/inmuebles', [InmuebleController::class, 'store'])->name('inmuebles.crud');

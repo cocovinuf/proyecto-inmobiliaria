@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Inmueble;
+use App\Models\Persona;
 
 class InmuebleController extends Controller
 {
@@ -58,4 +59,64 @@ class InmuebleController extends Controller
 
         return response()->json($datosTransformados);
     }
+
+
+
+    public function index()
+    {
+        // Obtenemos todas las personas de la base de datos
+        $personas = Persona::all(); 
+
+
+        // "Compact" personas Es una función de PHP que empaqueta la variable $personas (la que acabas de consultar con Eloquent) en un array asociativo para que esté disponible y puedas usarla dentro de tu archivo HTML/Blade.
+
+        // Las enviamos a la vista
+        return view('inmuebles', compact('personas')); 
+        
+    }
+
+
+
+
+    // La funcion que va a ejecutar la funcion de guardar el formulario en la db
+    public function store(Request $request)
+    {
+
+        if( $request->input('accion') == 'crear') {
+            // Valida y guarda todo lo que viene de los 'name' del formulario
+            Inmueble::create($request->all());
+
+            // Redirige de vuelta a la tabla con un mensaje o respuesta
+            return redirect()->back()->with('success', 'Inmueble creado con éxito');
+        }elseif( $request->input('accion') == 'editar') {
+
+            // 1. Buscamos a la persona por su ID (si no la encuentra, lanza un error 404 automáticamente)
+            $inmueble = Inmueble::findOrFail($request->input('id'));
+            
+            // 2. Actualizamos los datos con todo lo que viene del formulario
+            $inmueble->update($request->all());
+
+            // 3. Redirigimos de vuelta con un mensaje de éxito
+            return redirect()->back()->with('success', 'Inmueble actualizado correctamente.');
+
+        }elseif( $request->input('accion') == 'eliminar') {
+
+            // 1. Buscamos a la persona por su ID (si no la encuentra, lanza un error 404 automáticamente)
+            $inmueble = Inmueble::findOrFail($request->input('id'));
+            
+            // 2. Eliminamos el registro
+            $inmueble->delete();
+
+            // 3. Redirigimos de vuelta con un mensaje de éxito
+            return redirect()->back()->with('success', 'Inmueble eliminado correctamente.');
+        }
+
+    }
+
+
+
+
+
+
+
 }

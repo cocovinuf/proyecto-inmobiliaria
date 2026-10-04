@@ -8,6 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CDN de Tabulator -->
+    <link href="https://unpkg.com/tabulator-tables@5.5.0/dist/css/tabulator_bootstrap5.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
 
@@ -41,7 +43,6 @@
                 <li class="nav-item mb-1">
                     <a href="{{ route('notificaciones') }}" class="nav-link text-secondary d-flex justify-content-between align-items-center">
                         <span><i class="fa-regular fa-bell me-2"></i> Notificaciones</span>
-                        <!-- Opcional: un pequeño badge (globo) rojo para mostrar si hay alertas sin leer -->
                         <span class="badge bg-danger rounded-pill">3</span>
                     </a>
                 </li>
@@ -66,169 +67,290 @@
                     <p class="text-muted mb-0">Directorio de propietarios, inquilinos y garantes registrados.</p>
                 </div>
                 
-                <!-- Barra de Acciones del CRUD -->
+                <!-- Barra de Acciones del CRUD (Botones) -->
                 <div class="d-flex gap-2">
                     <button class="btn btn-primary d-flex align-items-center gap-2" id="btnNuevaPersona">
                         <i class="fa-solid fa-plus"></i> Nueva Persona
                     </button>
 
-                        <!-- La Ventana Modal de Bootstrap 5 para nueva persona -->
-                        <div class="modal fade" id="modalPersona" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Cargar Nueva Persona</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                                            
-                                                            <form action="{{ route('personas.store') }}" method="POST">
-                                @csrf <!-- Etiqueta de seguridad para que Laravel acepte el formulario -->
-
-                                <div class="row">
-                                    <!-- Apellido -->
-                                    <div class="col-md-6 mb-3">
-                                        <label for="apellido" class="form-label fw-bold">Apellido</label>
-                                        <input type="text" class="form-control" id="apellido" name="apellido" required>
-                                    </div>
-
-                                    <!-- Nombre -->
-                                    <div class="col-md-6 mb-3">
-                                        <label for="nombre" class="form-label fw-bold">Nombre</label>
-                                        <input type="text" class="form-control" id="nombre" name="nombre" required>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <!-- DNI -->
-                                    <div class="col-md-4 mb-3">
-                                        <label for="dni" class="form-label fw-bold">DNI</label>
-                                        <input type="text" class="form-control" id="dni" name="dni" required>
-                                    </div>
-
-                                    <!-- CUIL -->
-                                    <div class="col-md-4 mb-3">
-                                        <label for="cuil" class="form-label fw-bold">CUIL</label>
-                                        <input type="text" class="form-control" id="cuil" name="cuil">
-                                    </div>
-
-                                    <!-- CUIT -->
-                                    <div class="col-md-4 mb-3">
-                                        <label for="cuit" class="form-label fw-bold">CUIT</label>
-                                        <input type="text" class="form-control" id="cuit" name="cuit">
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <!-- Número de Teléfono -->
-                                    <div class="col-md-6 mb-3">
-                                        <label for="num_telefono" class="form-label fw-bold">Número de Teléfono</label>
-                                        <input type="text" class="form-control" id="num_telefono" name="num_telefono">
-                                    </div>
-
-                                    <!-- Número de cuenta bancaria -->
-                                    <div class="col-md-6 mb-3">
-                                        <label for="num_cuenta_bancaria" class="form-label fw-bold">N° de Cuenta Bancaria</label>
-                                        <input type="text" class="form-control" id="num_cuenta_bancaria" name="num_cuenta_bancaria">
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <!-- CBU -->
-                                    <div class="col-md-6 mb-3">
-                                        <label for="cbu" class="form-label fw-bold">CBU</label>
-                                        <input type="text" class="form-control" id="cbu" name="cbu">
-                                    </div>
-
-                                    <!-- Banco -->
-                                    <div class="col-md-6 mb-3">
-                                        <label for="nombre_banco" class="form-label fw-bold">Banco</label>
-                                        <input type="text" class="form-control" id="nombre_banco" name="nombre_banco">
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <!-- Titular de la cuenta -->
-                                    <div class="col-md-12 mb-3">
-                                        <label for="titular_cuenta" class="form-label fw-bold">Titular de la cuenta</label>
-                                        <input type="text" class="form-control" id="titular_cuenta" name="titular_cuenta">
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <!-- Link de Google Drive -->
-                                    <div class="col-md-12 mb-4">
-                                        <label for="documentacion" class="form-label fw-bold">Link de Google Drive para Documentación</label>
-                                        <input type="text" class="form-control" id="documentacion" name="documentacion" placeholder="https://drive.google.com/...">
-                                    </div>
-                                </div>
-
-                                <!-- Botón de envío -->
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-success btn-lg">Cargar nueva persona</button>
-                                </div>
-                            </form>                                
-                            </div>
-                            </div>
-                        </div>
-                        </div>
-
-
-
-
-
-
-
-
-
-
-                    <button id="btn-editar" class="btn btn-outline-secondary d-flex align-items-center gap-2" disabled>
+                    <button id="btnEditarPersona" class="btn btn-outline-secondary d-flex align-items-center gap-2">
                         <i class="fa-solid fa-pen-to-square"></i> Editar
                     </button>
-                    <button id="btn-eliminar" class="btn btn-outline-danger d-flex align-items-center gap-2" disabled>
+                   
+                    <button id="btnEliminarPersona" class="btn btn-outline-danger d-flex align-items-center gap-2">
                         <i class="fa-solid fa-trash-can"></i> Eliminar
                     </button>
                 </div>
             </div>
 
-    <!-- Ancla donde Tabulator inyectará la tabla, pasando la ruta dinámica -->
-    <div id="tabla-personas" data-url="{{ route('api.persona.datos') }}"></div>
-
-    <!-- CDN de Tabulator (con el tema para Bootstrap 5 que venimos usando) -->
-    <link href="https://unpkg.com/tabulator-tables@5.5.0/dist/css/tabulator_bootstrap5.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/tabulator-tables@5.5.0/dist/js/tabulator.min.js"></script>
-
-    <!-- Tu script que inicializa la tabla -->
-    <script src="{{ asset('js/tablas_tabulator/tabla_personas.js') }}"></script>   
-
-
+            <!-- Ancla donde Tabulator inyectará la tabla, pasando la ruta dinámica -->
+            <div id="tabla-personas" data-url="{{ route('api.persona.datos') }}"></div>
 
         </div>
     </div>
 
-    <!-- Script de selección de filas y habilitación de botones -->
-    <script>
-        const rows = document.querySelectorAll('#tabla-personas tbody tr');
-        const btnEditar = document.getElementById('btn-editar');
-        const btnEliminar = document.getElementById('btn-eliminar');
+    <!-- ========================================== -->
+    <!-- VENTANAS MODALES (Fuera del flujo visual)  -->
+    <!-- ========================================== -->
 
-        rows.forEach(row => {
-            row.addEventListener('click', (e) => {
-                // Evita conflictos si se hace clic directamente en el botón de detalles
-                if (e.target.closest('button')) return;
+    <!-- Modal Nueva Persona -->
+    <div class="modal fade" id="modalNuevaPersona" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cargar Nueva Persona</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('personas.crud') }}" method="POST">
+                        @csrf 
+                        <input type="hidden" name="accion" value="crear">
 
-                rows.forEach(r => {
-                    r.classList.remove('table-primary');
-                });
-                row.classList.add('table-primary');
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="apellido" class="form-label fw-bold">Apellido</label>
+                                <input type="text" class="form-control" id="apellido" name="apellido" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="nombre" class="form-label fw-bold">Nombre</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" required>
+                            </div>
+                        </div>
 
-                btnEditar.removeAttribute('disabled');
-                btnEliminar.removeAttribute('disabled');
-            });
-        });
-    </script>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="dni" class="form-label fw-bold">DNI</label>
+                                <input type="text" class="form-control" id="dni" name="dni" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="cuil" class="form-label fw-bold">CUIL</label>
+                                <input type="text" class="form-control" id="cuil" name="cuil">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="cuit" class="form-label fw-bold">CUIT</label>
+                                <input type="text" class="form-control" id="cuit" name="cuit">
+                            </div>
+                        </div>
 
-    <!-- Bootstrap 5 JS Bundle -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="num_telefono" class="form-label fw-bold">Número de Teléfono</label>
+                                <input type="text" class="form-control" id="num_telefono" name="num_telefono">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="num_cuenta_bancaria" class="form-label fw-bold">N° de Cuenta Bancaria</label>
+                                <input type="text" class="form-control" id="num_cuenta_bancaria" name="num_cuenta_bancaria">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="cbu" class="form-label fw-bold">CBU</label>
+                                <input type="text" class="form-control" id="cbu" name="cbu">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="nombre_banco" class="form-label fw-bold">Banco</label>
+                                <input type="text" class="form-control" id="nombre_banco" name="nombre_banco">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="titular_cuenta" class="form-label fw-bold">Titular de la cuenta</label>
+                                <input type="text" class="form-control" id="titular_cuenta" name="titular_cuenta">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-4">
+                                <label for="documentacion" class="form-label fw-bold">Link de Google Drive para Documentación</label>
+                                <input type="text" class="form-control" id="documentacion" name="documentacion" placeholder="https://drive.google.com/...">
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg">Cargar nueva persona</button>
+                        </div>
+                    </form>                        
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Persona -->
+    <div class="modal fade" id="modalEditarPersona" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Persona Existente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('personas.crud') }}" method="POST">
+                        @csrf 
+                        <input type="hidden" name="accion" value="editar">
+                        <input type="hidden" id="edit_id" name="id">
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_apellido" class="form-label fw-bold">Apellido</label>
+                                <input type="text" class="form-control" id="edit_apellido" name="apellido" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_nombre" class="form-label fw-bold">Nombre</label>
+                                <input type="text" class="form-control" id="edit_nombre" name="nombre" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="edit_dni" class="form-label fw-bold">DNI</label>
+                                <input type="text" class="form-control" id="edit_dni" name="dni" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="edit_cuil" class="form-label fw-bold">CUIL</label>
+                                <input type="text" class="form-control" id="edit_cuil" name="cuil">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="edit_cuit" class="form-label fw-bold">CUIT</label>
+                                <input type="text" class="form-control" id="edit_cuit" name="cuit">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_num_telefono" class="form-label fw-bold">Número de Teléfono</label>
+                                <input type="text" class="form-control" id="edit_num_telefono" name="num_telefono">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_num_cuenta_bancaria" class="form-label fw-bold">N° de Cuenta Bancaria</label>
+                                <input type="text" class="form-control" id="edit_num_cuenta_bancaria" name="num_cuenta_bancaria">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_cbu" class="form-label fw-bold">CBU</label>
+                                <input type="text" class="form-control" id="edit_cbu" name="cbu">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_nombre_banco" class="form-label fw-bold">Banco</label>
+                                <input type="text" class="form-control" id="edit_nombre_banco" name="nombre_banco">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="edit_titular_cuenta" class="form-label fw-bold">Titular de la cuenta</label>
+                                <input type="text" class="form-control" id="edit_titular_cuenta" name="titular_cuenta">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-4">
+                                <label for="edit_documentacion" class="form-label fw-bold">Link de Google Drive para Documentación</label>
+                                <input type="text" class="form-control" id="edit_documentacion" name="documentacion" placeholder="https://drive.google.com/...">
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg">Editar Persona</button>
+                        </div>
+                    </form>                        
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+        <!-- Modal Eliminar Persona -->
+    <div class="modal fade" id="modalEliminarPersona" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Eliminar Persona</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('personas.crud') }}" method="POST">
+                        @csrf 
+                        <input type="hidden" name="accion" value="eliminar">
+                        <input type="hidden" id="eliminar_id" name="id">
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="eliminar_apellido" class="form-label fw-bold">Apellido</label>
+                                <input type="text" class="form-control" id="eliminar_apellido" name="apellido" disabled>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="eliminar_nombre" class="form-label fw-bold">Nombre</label>
+                                <input type="text" class="form-control" id="eliminar_nombre" name="nombre" disabled>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="eliminar_dni" class="form-label fw-bold">DNI</label>
+                                <input type="text" class="form-control" id="eliminar_dni" name="dni" disabled>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="eliminar_cuil" class="form-label fw-bold">CUIL</label>
+                                <input type="text" class="form-control" id="eliminar_cuil" name="cuil" disabled>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="eliminar_cuit" class="form-label fw-bold">CUIT</label>
+                                <input type="text" class="form-control" id="eliminar_cuit" name="cuit" disabled>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="eliminar_num_telefono" class="form-label fw-bold">Número de Teléfono</label>
+                                <input type="text" class="form-control" id="eliminar_num_telefono" name="num_telefono" disabled>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="eliminar_num_cuenta_bancaria" class="form-label fw-bold">N° de Cuenta Bancaria</label>
+                                <input type="text" class="form-control" id="eliminar_num_cuenta_bancaria" name="num_cuenta_bancaria" disabled>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="eliminar_cbu" class="form-label fw-bold">CBU</label>
+                                <input type="text" class="form-control" id="eliminar_cbu" name="cbu" disabled>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="eliminar_nombre_banco" class="form-label fw-bold">Banco</label>
+                                <input type="text" class="form-control" id="eliminar_nombre_banco" name="nombre_banco" disabled>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="eliminar_titular_cuenta" class="form-label fw-bold">Titular de la cuenta</label>
+                                <input type="text" class="form-control" id="eliminar_titular_cuenta" name="titular_cuenta" disabled>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-4">
+                                <label for="eliminar_documentacion" class="form-label fw-bold">Link de Google Drive para Documentación</label>
+                                <input type="text" class="form-control" id="eliminar_documentacion" name="documentacion" placeholder="https://drive.google.com/..." disabled>
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-danger btn-lg">Eliminar Persona</button>
+                        </div>
+                    </form>                        
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts de Tabulator y Bootstrap -->
+    <script src="https://unpkg.com/tabulator-tables@5.5.0/dist/js/tabulator.min.js"></script>
+    <script src="{{ asset('js/tablas_tabulator/tabla_personas.js') }}"></script> 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('js/personas.js') }}"></script>
 </body>
