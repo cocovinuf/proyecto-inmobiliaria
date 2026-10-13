@@ -12,6 +12,7 @@ class Contrato extends Model
     protected $table = 'contratos';
 
     protected $fillable = [
+        'alias',
         'inmueble_id',
         'fecha_inicio',
         'fecha_finalizacion',
@@ -19,7 +20,8 @@ class Contrato extends Model
         'monto_actual',
         'periodo_actualizacion',
         'indice_actualizacion',
-        'duracion',
+        "estado",
+        
     ];
 
     // Convertimos los campos en objetos de fecha automáticamente

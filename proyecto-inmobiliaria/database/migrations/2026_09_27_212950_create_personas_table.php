@@ -16,11 +16,13 @@ return new class extends Migration
             $table->string('apellido');
             $table->string('nombre');
             $table->string('dni');
-            $table->string('num_telefono');
-            $table->string('num_cuenta_bancaria');
-            $table->string('cbu');
-            $table->string('nombre_banco');
-            $table->string('titular_cuenta');
+            $table->string('cuit') ->nullable();
+            $table->string('cuil') ->nullable();
+            $table->string('num_telefono') ->nullable();
+            $table->string('num_cuenta_bancaria') ->nullable();
+            $table->string('cbu') ->nullable();
+            $table->string('nombre_banco') ->nullable();
+            $table->string('titular_cuenta') ->nullable();
             $table->text('documentacion')->nullable();
             $table->timestamps();
         });

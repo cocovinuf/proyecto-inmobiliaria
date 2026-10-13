@@ -1,0 +1,247 @@
+USE [DBProyectoInmobiliaria]
+GO
+
+-- Desactivar temporalmente restricciones de foreign keys si fuera necesario, 
+-- aunque el script se ejecutará en orden estricto de dependencia.
+SET NOCOUNT ON;
+
+-- ==============================================================================
+-- 1. USERS (50 registros)
+-- ==============================================================================
+DECLARE @i INT = 1;
+WHILE @i <= 50
+BEGIN
+    INSERT INTO [dbo].[users] ([apellido], [nombre], [email], [password], [created_at], [updated_at])
+    VALUES (
+        'ApellidoUser' + CAST(@i AS VARCHAR),
+        'NombreUser' + CAST(@i AS VARCHAR),
+        'user' + CAST(@i AS VARCHAR) + '@inmobiliaria.com',
+        '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+        GETDATE(),
+        GETDATE()
+    );
+    SET @i = @i + 1;
+END
+GO
+
+-- ==============================================================================
+-- 2. PERSONAS (50 registros)
+-- ==============================================================================
+DECLARE @i INT = 1;
+WHILE @i <= 50
+BEGIN
+    INSERT INTO [dbo].[personas] ([apellido], [nombre], [dni], [num_telefono], [num_cuenta_bancaria], [cbu], [nombre_banco], [titular_cuenta], [created_at], [updated_at])
+    VALUES (
+        'ApellidoP' + CAST(@i AS VARCHAR),
+        'NombreP' + CAST(@i AS VARCHAR),
+        CAST(30000000 + @i AS VARCHAR),
+        '3764' + RIGHT('000000' + CAST(@i AS VARCHAR), 6),
+        'CTA-' + CAST(1000 + @i AS VARCHAR),
+        '011000000000000000' + RIGHT('00' + CAST(@i AS VARCHAR), 4),
+        CASE (@i % 4) WHEN 0 THEN 'Banco Galicia' WHEN 1 THEN 'Banco BBVA' WHEN 2 THEN 'Banco Santander' ELSE 'Banco Provincia' END,
+        'NombreP' + CAST(@i AS VARCHAR) + ' ApellidoP' + CAST(@i AS VARCHAR),
+        GETDATE(),
+        GETDATE()
+    );
+    SET @i = @i + 1;
+END
+GO
+
+-- ==============================================================================
+-- 3. INMUEBLES (50 registros - Asociados a los primeros propietarios IDs 1 al 50)
+-- ==============================================================================
+DECLARE @i INT = 1;
+WHILE @i <= 50
+BEGIN
+    INSERT INTO [dbo].[inmuebles] (
+        [propietario_id], [alias], [tipo], [nombre_edificio], [calle], [numeracion], 
+        [piso], [departamento], [unidad_funcional], [superficie], [cantidad_ambientes], 
+        [cantidad_dormitorios], [cantidad_banios], [cochera], [quincho], [parrilla], [sum], 
+        [piscina], [gimnasio], [solarium], [vigilancia], [jardin], [lavanderia], 
+        [terraza], [cancha_de_deportes], [sauna], [sala_de_reuniones], [lockers_de_paqueteria], 
+        [espacio_coworking], [sala_de_juegos], [created_at], [updated_at]
+    )
+    VALUES (
+        @i, -- Propietario ID
+        'Inmueble Propiedad ' + CAST(@i AS VARCHAR),
+        CASE (@i % 3) WHEN 0 THEN 'Casa' WHEN 1 THEN 'Departamento' ELSE 'Local Comercial' END,
+        CASE WHEN (@i % 3) = 1 THEN 'Edificio Torre ' + CAST(@i AS VARCHAR) ELSE NULL END,
+        'Calle Principal',
+        1000 + @i,
+        CASE WHEN (@i % 3) = 1 THEN (@i % 10) + 1 ELSE NULL END,
+        CASE WHEN (@i % 3) = 1 THEN CHAR(65 + (@i % 5)) ELSE NULL END,
+        CASE WHEN (@i % 3) = 1 THEN 'UF' + CAST(@i AS VARCHAR) ELSE NULL END,
+        CAST(40 + (@i * 3) AS VARCHAR) + 'm2',
+        (@i % 4) + 1,
+        (@i % 3),
+        ((@i % 2) + 1),
+        (@i % 2),
+        (@i % 2),
+        ((@i + 1) % 2),
+        0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+        GETDATE(),
+        GETDATE()
+    );
+    SET @i = @i + 1;
+END
+GO
+
+-- ==============================================================================
+-- 4. CONTRATOS (50 registros - Asociados a los 50 inmuebles)
+-- ==============================================================================
+DECLARE @i INT = 1;
+WHILE @i <= 50
+BEGIN
+    INSERT INTO [dbo].[contratos] (
+        [inmueble_id], [alias], [fecha_inicio], [fecha_finalizacion], 
+        [monto_inicial], [monto_actual], [periodo_actualizacion], 
+        [indice_actualizacion], [estado], [created_at], [updated_at]
+    )
+    VALUES (
+        @i,
+        'Contrato Alquiler N° ' + CAST(@i AS VARCHAR),
+        DATEADD(month, -(@i % 12), GETDATE()),
+        DATEADD(month, 24 - (@i % 12), GETDATE()),
+        150000.00 + (@i * 5000),
+        180000.00 + (@i * 5000),
+        CASE (@i % 3) WHEN 0 THEN 'Trimestral' WHEN 1 THEN 'Semestral' ELSE 'Anual' END,
+        CASE (@i % 2) WHEN 0 THEN 'ICL' ELSE 'IPC' END,
+        CASE (@i % 3) WHEN 0 THEN 'inactivo' WHEN 1 THEN 'rescindido' ELSE 'activo' END,
+        GETDATE(),
+        GETDATE()
+    );
+    SET @i = @i + 1;
+END
+GO
+
+-- ==============================================================================
+-- 5. CONTRATO_INQUILINO (50 registros - Pivote)
+-- ==============================================================================
+DECLARE @i INT = 1;
+WHILE @i <= 50
+BEGIN
+    -- Asignamos inquilinos cíclicamente asegurando IDs válidos de personas (ej: del 1 al 50)
+    INSERT INTO [dbo].[contrato_inquilino] ([contrato_id], [persona_id], [created_at], [updated_at])
+    VALUES (@i, ((@i % 50) + 1), GETDATE(), GETDATE());
+    SET @i = @i + 1;
+END
+GO
+
+-- ==============================================================================
+-- 6. CONTRATO_GARANTE (50 registros - Pivote)
+-- ==============================================================================
+DECLARE @i INT = 1;
+WHILE @i <= 50
+BEGIN
+    INSERT INTO [dbo].[contrato_garante] ([contrato_id], [persona_id], [created_at], [updated_at])
+    VALUES (@i, ((@i + 10) % 50) + 1, GETDATE(), GETDATE());
+    SET @i = @i + 1;
+END
+GO
+
+-- ==============================================================================
+-- 7. LIQUIDACIONES (50 registros)
+-- ==============================================================================
+DECLARE @i INT = 1;
+WHILE @i <= 50
+BEGIN
+    INSERT INTO [dbo].[liquidaciones] (
+        [contrato_id], [periodo], [monto_alquiler], [monto_expensa], 
+        [pagado], [rendido], [created_at], [updated_at]
+    )
+    VALUES (
+        ((@i % 50) + 1),
+        'Periodo ' + CAST(@i AS VARCHAR) + ' 2026',
+        200000.00,
+        15000.00,
+        CASE WHEN (@i % 2) = 0 THEN DATEADD(day, -5, GETDATE()) ELSE NULL END,
+        CASE WHEN (@i % 2) = 0 THEN GETDATE() ELSE NULL END,
+        GETDATE(),
+        GETDATE()
+    );
+    SET @i = @i + 1;
+END
+GO
+
+-- ==============================================================================
+-- 8. REPARACIONES (50 registros)
+-- ==============================================================================
+DECLARE @i INT = 1;
+WHILE @i <= 50
+BEGIN
+    INSERT INTO [dbo].[reparaciones] (
+        [inmueble_id], [descripcion], [fecha_inicio], [fecha_finalizacion], 
+        [monto], [comprobante], [created_at], [updated_at]
+    )
+    VALUES (
+        ((@i % 50) + 1),
+        'Reparación general número ' + CAST(@i AS VARCHAR),
+        DATEADD(day, -@i, GETDATE()),
+        CASE WHEN (@i % 2) = 0 THEN GETDATE() ELSE NULL END,
+        25000.00 + (@i * 1000),
+        CASE WHEN (@i % 2) = 0 THEN 'comprobante_' + CAST(@i AS VARCHAR) + '.pdf' ELSE NULL END,
+        GETDATE(),
+        GETDATE()
+    );
+    SET @i = @i + 1;
+END
+GO
+
+-- ==============================================================================
+-- 9. NOTIFICACIONES (50 registros)
+-- ==============================================================================
+DECLARE @i INT = 1;
+WHILE @i <= 50
+BEGIN
+    INSERT INTO [dbo].[notificaciones] (
+        [usuario_id], [contrato_id], [mensaje], [leida_en], [created_at], [updated_at]
+    )
+    VALUES (
+        ((@i % 50) + 1),
+        ((@i % 50) + 1),
+        'Notificación de sistema automatizada N° ' + CAST(@i AS VARCHAR),
+        CASE WHEN (@i % 2) = 0 THEN GETDATE() ELSE NULL END,
+        GETDATE(),
+        GETDATE()
+    );
+    SET @i = @i + 1;
+END
+GO
+
+-- ==============================================================================
+-- 10. TABLAS AUXILIARES DE LARAVEL (cache, jobs, failed_jobs, migrations, password_reset_tokens, sessions)
+-- ==============================================================================
+DECLARE @i INT = 1;
+WHILE @i <= 50
+BEGIN
+    -- Migrations
+    INSERT INTO [dbo].[migrations] ([migration], [batch]) 
+    VALUES ('2024_01_01_00000' + CAST(@i AS VARCHAR) + '_create_table', 1);
+
+    -- Password reset tokens
+    INSERT INTO [dbo].[password_reset_tokens] ([email], [token], [created_at])
+    VALUES ('user' + CAST(@i AS VARCHAR) + '@inmobiliaria.com', 'tokenhash' + CAST(@i AS VARCHAR), GETDATE());
+
+    -- Cache
+    INSERT INTO [dbo].[cache] ([key], [value], [expiration])
+    VALUES ('laravel_cache_key_' + CAST(@i AS VARCHAR), 'serialized_value_' + CAST(@i AS VARCHAR), 1775000000 + @i);
+
+    -- Cache locks
+    INSERT INTO [dbo].[cache_locks] ([key], [owner], [expiration])
+    VALUES ('laravel_lock_key_' + CAST(@i AS VARCHAR), 'owner_' + CAST(@i AS VARCHAR), 1775000000 + @i);
+
+    -- Failed jobs
+    INSERT INTO [dbo].[failed_jobs] ([uuid], [connection], [queue], [payload], [exception], [failed_at])
+    VALUES (NEWID(), 'database', 'default', '{"displayName":"Job"}', 'Exception trace...', GETDATE());
+
+    -- Jobs
+    INSERT INTO [dbo].[jobs] ([queue], [payload], [attempts], [reserved_at], [available_at], [created_at])
+    VALUES ('default', '{"displayName":"Job"}', 1, NULL, 1775000000, 1775000000);
+
+    -- Sessions
+    INSERT INTO [dbo].[sessions] ([id], [user_id], [ip_address], [user_agent], [payload], [last_activity])
+    VALUES (CAST(@i AS VARCHAR) + 'sessionIdStringUnique', (@i % 50) + 1, '192.168.1.' + CAST((@i % 250) AS VARCHAR), 'Mozilla/5.0 Browser', 'payload_data', 1775000000 + @i);
+
+    SET @i = @i + 1;
+END
+GO

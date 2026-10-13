@@ -25,6 +25,7 @@ class Inmueble extends Model
         'cantidad_ambientes',
         'cantidad_dormitorios',
         'cantidad_banios',
+        'cochera',
         'quincho',
         'parrilla',
         'sum',
@@ -47,5 +48,11 @@ class Inmueble extends Model
     public function propietario()
     {
         return $this->belongsTo(Persona::class, 'propietario_id');
+    }
+
+    // NUEVA RELACIÓN: Un inmueble tiene muchas reparaciones
+    public function reparaciones()
+    {
+        return $this->hasMany(Reparacion::class, 'inmueble_id');
     }
 }

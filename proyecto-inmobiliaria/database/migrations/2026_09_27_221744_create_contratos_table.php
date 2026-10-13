@@ -19,13 +19,15 @@ return new class extends Migration
             $table->foreignId('inmueble_id')->constrained('inmuebles');
             
             // Datos del contrato
+            $table->string('alias');
             $table->date('fecha_inicio');
             $table->date('fecha_finalizacion');
             $table->decimal('monto_inicial', 12, 2); // Usamos decimal en vez de float para dinero
             $table->decimal('monto_actual', 12, 2);  // NUEVO CAMPO: Registra las actualizaciones del arancel
             $table->string('periodo_actualizacion');
             $table->string('indice_actualizacion');
-            $table->integer('duracion');
+            $table->string('estado');
+            
             
             $table->timestamps();
         });

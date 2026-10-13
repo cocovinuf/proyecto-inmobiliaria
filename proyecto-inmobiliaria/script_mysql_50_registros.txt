@@ -1,0 +1,561 @@
+-- ============================================================================
+-- SCRIPT MySQL / phpMyAdmin - Proyecto Inmobiliaria
+-- 50 registros DISTINTOS por tabla + cobertura de relaciones
+-- Generado: 2026 | Motor: InnoDB / utf8mb4
+-- Uso en phpMyAdmin: seleccionar la BD -> pestana SQL -> pegar / importar este archivo
+-- ============================================================================
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------------------------------------------------------
+-- MAPA DE RELACIONES CUBIERTAS
+-- Persona 1-N Inmueble (propietario_id): pers 1-10 con 3 inmuebles c/u (1-30),
+--   pers 11-20 con 2 c/u (31-50), pers 21-50 SIN inmuebles (caso 0 hijos).
+-- Inmueble 1-N Contrato: inm 1-10 con 2 contratos c/u (cont 1-20),
+--   inm 11-40 con 1 c/u (cont 21-50), inm 41-50 SIN contrato.
+-- Contrato N-M Persona (contrato_inquilino): cont 1-10 con 2 inquilinos (20 filas),
+--   cont 11-40 con 1 (30 filas), cont 41-50 SIN inquilino.
+-- Contrato N-M Persona (contrato_garante): cont 1 con 3 garantes, cont 2-8 con 2 (14),
+--   cont 9-41 con 1 (33), cont 42-50 SIN garante.
+-- Contrato 1-N Liquidacion: cont 1-10 con 2 (20 filas), cont 11-40 con 1 (30),
+--   cont 41-50 SIN liquidacion. Incluye pagada/rendida, pagada/no rendida, impaga, periodo NULL.
+-- Inmueble 1-N Reparacion: inm 1-5 con 3 (15 filas), inm 6-40 con 1 (35),
+--   inm 41-50 SIN reparacion. Incluye finalizada/en curso, con/sin comprobante.
+-- User 1-N Notificacion: user 1 con 3, users 2-10 con 2 c/u (18), users 11-39 con 1 (29),
+--   users 40-50 SIN notificacion. Incluye leida/no leida, con/sin contrato (FK nullable).
+-- Persona multi-rol: misma persona es propietaria + garante, otra es inquilina en 2 contratos,
+--   y varias personas (ej. 48-50) SIN ningun rol.
+-- ----------------------------------------------------------------------------
+
+-- Limpieza previa (comentable si no se quiere borrar datos existentes)
+DELETE FROM `notificaciones`;
+DELETE FROM `liquidaciones`;
+DELETE FROM `contrato_garante`;
+DELETE FROM `contrato_inquilino`;
+DELETE FROM `contratos`;
+DELETE FROM `reparaciones`;
+DELETE FROM `inmuebles`;
+DELETE FROM `personas`;
+DELETE FROM `users`;
+
+-- ============================================================================
+-- 1. USERS (50) - email unico, verificado/no verificado, remember_token null/no null
+-- ============================================================================
+INSERT INTO `users` (`id`,`apellido`,`nombre`,`email`,`email_verified_at`,`password`,`remember_token`,`created_at`,`updated_at`) VALUES
+(1,'Garcia','Juan','user01@inmobiliaria.com','2025-02-02 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tok01AbCdEf1234','2025-01-02 08:00:00','2026-02-02 09:00:00'),
+(2,'Fernandez','Maria','user02@inmobiliaria.com','2025-03-03 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'2025-01-03 08:00:00','2026-02-03 09:00:00'),
+(3,'Lopez','Carlos','user03@inmobiliaria.com',NULL,'$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tok03AbCdEf1234','2025-01-04 08:00:00','2026-02-04 09:00:00'),
+(4,'Martinez','Ana','user04@inmobiliaria.com','2025-05-05 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'2025-01-05 08:00:00','2026-02-05 09:00:00'),
+(5,'Sanchez','Luis','user05@inmobiliaria.com','2025-06-06 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tok05AbCdEf1234','2025-01-06 08:00:00','2026-02-06 09:00:00'),
+(6,'Perez','Laura','user06@inmobiliaria.com',NULL,'$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'2025-01-07 08:00:00','2026-02-07 09:00:00'),
+(7,'Gomez','Pedro','user07@inmobiliaria.com','2025-08-08 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tok07AbCdEf1234','2025-01-08 08:00:00','2026-02-08 09:00:00'),
+(8,'Diaz','Sofia','user08@inmobiliaria.com','2025-09-09 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'2025-01-09 08:00:00','2026-02-09 09:00:00'),
+(9,'Torres','Diego','user09@inmobiliaria.com',NULL,'$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tok09AbCdEf1234','2025-01-10 08:00:00','2026-02-10 09:00:00'),
+(10,'Ruiz','Valentina','user10@inmobiliaria.com','2025-11-11 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'2025-01-11 08:00:00','2026-02-11 09:00:00'),
+(11,'Alvarez','Martin','user11@inmobiliaria.com','2025-12-12 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tok11AbCdEf1234','2025-01-12 08:00:00','2026-02-12 09:00:00'),
+(12,'Romero','Camila','user12@inmobiliaria.com',NULL,'$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'2025-01-13 08:00:00','2026-02-13 09:00:00'),
+(13,'Moreno','Jorge','user13@inmobiliaria.com','2025-02-14 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tok13AbCdEf1234','2025-01-14 08:00:00','2026-02-14 09:00:00'),
+(14,'Jimenez','Lucia','user14@inmobiliaria.com','2025-03-15 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'2025-01-15 08:00:00','2026-02-15 09:00:00'),
+(15,'Navarro','Miguel','user15@inmobiliaria.com',NULL,'$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tok15AbCdEf1234','2025-01-16 08:00:00','2026-02-16 09:00:00'),
+(16,'Ortega','Florencia','user16@inmobiliaria.com','2025-05-17 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'2025-01-17 08:00:00','2026-02-17 09:00:00'),
+(17,'Sosa','Andres','user17@inmobiliaria.com','2025-06-18 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tok17AbCdEf1234','2025-01-18 08:00:00','2026-02-18 09:00:00'),
+(18,'Vega','Paula','user18@inmobiliaria.com',NULL,'$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'2025-01-19 08:00:00','2026-02-19 09:00:00'),
+(19,'Castro','Ricardo','user19@inmobiliaria.com','2025-08-20 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tok19AbCdEf1234','2025-01-20 08:00:00','2026-02-20 09:00:00'),
+(20,'Rojas','Elena','user20@inmobiliaria.com','2025-09-21 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'2025-01-21 08:00:00','2026-02-21 09:00:00'),
+(21,'Acosta','Fernando','user21@inmobiliaria.com',NULL,'$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tok21AbCdEf1234','2025-01-22 08:00:00','2026-02-22 09:00:00'),
+(22,'Benitez','Gabriela','user22@inmobiliaria.com','2025-11-23 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'2025-01-23 08:00:00','2026-02-23 09:00:00'),
+(23,'Cardozo','Hugo','user23@inmobiliaria.com','2025-12-24 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tok23AbCdEf1234','2025-01-24 08:00:00','2026-02-24 09:00:00'),
+(24,'Duarte','Daniela','user24@inmobiliaria.com',NULL,'$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'2025-01-25 08:00:00','2026-02-25 09:00:00'),
+(25,'Escobar','Oscar','user25@inmobiliaria.com','2025-02-26 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tok25AbCdEf1234','2025-01-26 08:00:00','2026-02-26 09:00:00'),
+(26,'Ferreira','Carolina','user26@inmobiliaria.com','2025-03-27 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'2025-01-27 08:00:00','2026-02-27 09:00:00'),
+(27,'Gimenez','Pablo','user27@inmobiliaria.com',NULL,'$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tok27AbCdEf1234','2025-01-28 08:00:00','2026-02-28 09:00:00'),
+(28,'Herrera','Marina','user28@inmobiliaria.com','2025-05-01 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'2025-01-01 08:00:00','2026-02-01 09:00:00'),
+(29,'Ibarra','Raul','user29@inmobiliaria.com','2025-06-02 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tok29AbCdEf1234','2025-01-02 08:00:00','2026-02-02 09:00:00'),
+(30,'Jara','Natalia','user30@inmobiliaria.com',NULL,'$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'2025-01-03 08:00:00','2026-02-03 09:00:00'),
+(31,'Krause','Enrique','user31@inmobiliaria.com','2025-08-04 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tok31AbCdEf1234','2025-01-04 08:00:00','2026-02-04 09:00:00'),
+(32,'Ledesma','Silvia','user32@inmobiliaria.com','2025-09-05 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'2025-01-05 08:00:00','2026-02-05 09:00:00'),
+(33,'Maciel','Gustavo','user33@inmobiliaria.com',NULL,'$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tok33AbCdEf1234','2025-01-06 08:00:00','2026-02-06 09:00:00'),
+(34,'Nunez','Alicia','user34@inmobiliaria.com','2025-11-07 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'2025-01-07 08:00:00','2026-02-07 09:00:00'),
+(35,'Ojeda','Roberto','user35@inmobiliaria.com','2025-12-08 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tok35AbCdEf1234','2025-01-08 08:00:00','2026-02-08 09:00:00'),
+(36,'Paredes','Monica','user36@inmobiliaria.com',NULL,'$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'2025-01-09 08:00:00','2026-02-09 09:00:00'),
+(37,'Quiroga','Daniel','user37@inmobiliaria.com','2025-02-10 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tok37AbCdEf1234','2025-01-10 08:00:00','2026-02-10 09:00:00'),
+(38,'Rios','Patricia','user38@inmobiliaria.com','2025-03-11 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'2025-01-11 08:00:00','2026-02-11 09:00:00'),
+(39,'Saucedo','Alejandro','user39@inmobiliaria.com',NULL,'$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tok39AbCdEf1234','2025-01-12 08:00:00','2026-02-12 09:00:00'),
+(40,'Toledo','Carmen','user40@inmobiliaria.com','2025-05-13 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'2025-01-13 08:00:00','2026-02-13 09:00:00'),
+(41,'5428','Eduardo','user41@inmobiliaria.com','2025-06-14 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tok41AbCdEf1234','2025-01-14 08:00:00','2026-02-14 09:00:00'),
+(42,'Vera','Rosa','user42@inmobiliaria.com',NULL,'$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'2025-01-15 08:00:00','2026-02-15 09:00:00'),
+(43,'Villalba','Felipe','user43@inmobiliaria.com','2025-08-16 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tok43AbCdEf1234','2025-01-16 08:00:00','2026-02-16 09:00:00'),
+(44,'Yegros','Teresa','user44@inmobiliaria.com','2025-09-17 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'2025-01-17 08:00:00','2026-02-17 09:00:00'),
+(45,'Zapata','Nicolas','user45@inmobiliaria.com',NULL,'$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tok45AbCdEf1234','2025-01-18 08:00:00','2026-02-18 09:00:00'),
+(46,'Aguilera','Beatriz','user46@inmobiliaria.com','2025-11-19 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'2025-01-19 08:00:00','2026-02-19 09:00:00'),
+(47,'Barrios','Santiago','user47@inmobiliaria.com','2025-12-20 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tok47AbCdEf1234','2025-01-20 08:00:00','2026-02-20 09:00:00'),
+(48,'Cabrera','Marta','user48@inmobiliaria.com',NULL,'$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'2025-01-21 08:00:00','2026-02-21 09:00:00'),
+(49,'Dominguez','Emilio','user49@inmobiliaria.com','2025-02-22 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','tok49AbCdEf1234','2025-01-22 08:00:00','2026-02-22 09:00:00'),
+(50,'Escalante','Claudia','user50@inmobiliaria.com','2025-03-23 10:00:00','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'2025-01-23 08:00:00','2026-02-23 09:00:00');
+ALTER TABLE `users` AUTO_INCREMENT = 51;
+
+-- ============================================================================
+-- 2. PERSONAS (50) - dni unico, cuit/cuil/tel/banco nullables, documentacion variada
+-- Roles: 1-20 propietarias | 21-40 inquilinas | mixtas garantes | 48-50 sin rol
+-- ============================================================================
+INSERT INTO `personas` (`id`,`apellido`,`nombre`,`dni`,`cuit`,`cuil`,`num_telefono`,`num_cuenta_bancaria`,`cbu`,`nombre_banco`,`titular_cuenta`,`documentacion`,`created_at`,`updated_at`) VALUES
+(1,'Diaz','Lucia','30000001','20-30000001-1','27-30000001-4','3764100137','CTA-1001','0110012300007919000013','Banco BBVA','Lucia Diaz','dni_01_frente.jpg','2025-03-02 08:00:00','2026-03-02 09:00:00'),
+(2,'Navarro','Pablo','30000002','20-30000002-2','27-30000002-5','3764100274','CTA-1002','0110012300015838000026','Banco Santander','Pablo Navarro',NULL,'2025-03-03 08:00:00','2026-03-03 09:00:00'),
+(3,'Benitez','Carmen','30000003',NULL,'27-30000003-6','3764100411',NULL,NULL,NULL,NULL,'dni_03_frente.jpg','2025-03-04 08:00:00','2026-03-04 09:00:00'),
+(4,'Ibarra','Carlos','30000004','20-30000004-4',NULL,'3764100548','CTA-1004','0110012300031676000052','Banco Macro','Carlos Ibarra',NULL,'2025-03-05 08:00:00','2026-03-05 09:00:00'),
+(5,'Paredes','Florencia','30000005','20-30000005-5','27-30000005-8',NULL,'CTA-1005','0110012300039595000065','Banco Patagonia','Florencia Paredes','dni_05_frente.jpg','2025-03-06 08:00:00','2026-03-06 09:00:00'),
+(6,'Villalba','Raul','30000006',NULL,'27-30000006-9','3764100822',NULL,NULL,NULL,NULL,NULL,'2025-03-07 08:00:00','2026-03-07 09:00:00'),
+(7,'Escalante','Rosa','30000007','20-30000007-7','27-30000007-0','3764100959','CTA-1007','0110012300055433000091','Banco BBVA','Rosa Escalante','dni_07_frente.jpg','2025-03-08 08:00:00','2026-03-08 09:00:00'),
+(8,'Gomez','Luis','30000008','20-30000008-8',NULL,'3764101096','CTA-1008','0110012300063352000104','Banco Santander','Luis Gomez',NULL,'2025-03-09 08:00:00','2026-03-09 09:00:00'),
+(9,'Jimenez','Paula','30000009',NULL,'27-30000009-2','3764101233',NULL,NULL,NULL,NULL,'dni_09_frente.jpg','2025-03-10 08:00:00','2026-03-10 09:00:00'),
+(10,'Acosta','Enrique','30000010','20-30000010-0','27-30000010-3',NULL,'CTA-1010','0110012300079190000130','Banco Macro','Enrique Acosta',NULL,'2025-03-11 08:00:00','2026-03-11 09:00:00'),
+(11,'Herrera','Teresa','30000011','20-30000011-1','27-30000011-4','3764101507','CTA-1011','0110012300087109000143','Banco Patagonia','Teresa Herrera','dni_11_frente.jpg','2025-03-12 08:00:00','2026-03-12 09:00:00'),
+(12,'Ojeda','Pedro','30000012',NULL,NULL,'3764101644',NULL,NULL,NULL,NULL,NULL,'2025-03-13 08:00:00','2026-03-13 09:00:00'),
+(13,'Vera','Elena','30000013','20-30000013-3','27-30000013-6','3764101781','CTA-1013','0110012300102947000169','Banco BBVA','Elena Vera','dni_13_frente.jpg','2025-03-14 08:00:00','2026-03-14 09:00:00'),
+(14,'Dominguez','Gustavo','30000014','20-30000014-4','27-30000014-7','3764101918','CTA-1014','0110012300110866000182','Banco Santander','Gustavo Dominguez',NULL,'2025-03-15 08:00:00','2026-03-15 09:00:00'),
+(15,'Perez','Beatriz','30000015',NULL,'27-30000015-8',NULL,NULL,NULL,NULL,NULL,'dni_15_frente.jpg','2025-03-16 08:00:00','2026-03-16 09:00:00'),
+(16,'Moreno','Diego','30000016','20-30000016-6',NULL,'3764102192','CTA-1016','0110012300126704000208','Banco Macro','Diego Moreno',NULL,'2025-03-17 08:00:00','2026-03-17 09:00:00'),
+(17,'Rojas','Gabriela','30000017','20-30000017-7','27-30000017-0','3764102329','CTA-1017','0110012300134623000221','Banco Patagonia','Gabriela Rojas','dni_17_frente.jpg','2025-03-18 08:00:00','2026-03-18 09:00:00'),
+(18,'Gimenez','Roberto','30000018',NULL,'27-30000018-1','3764102466',NULL,NULL,NULL,NULL,NULL,'2025-03-19 08:00:00','2026-03-19 09:00:00'),
+(19,'Nunez','Marta','30000019','20-30000019-9','27-30000019-2','3764102603','CTA-1019','0110012300150461000247','Banco BBVA','Marta Nunez','dni_19_frente.jpg','2025-03-20 08:00:00','2026-03-20 09:00:00'),
+(20,'5428','Martin','30000020','20-30000020-0',NULL,NULL,'CTA-1020','0110012300158380000260','Banco Santander','Martin 5428',NULL,'2025-03-21 08:00:00','2026-03-21 09:00:00'),
+(21,'Cabrera','Daniela','30000021',NULL,'27-30000021-4','3764102877',NULL,NULL,NULL,NULL,'dni_21_frente.jpg','2025-03-22 08:00:00','2026-03-22 09:00:00'),
+(22,'Sanchez','Daniel','30000022','20-30000022-2','27-30000022-5','3764103014','CTA-1022','0110012300174218000286','Banco Macro','Daniel Sanchez',NULL,'2025-03-23 08:00:00','2026-03-23 09:00:00'),
+(23,'Romero','Claudia','30000023','20-30000023-3','27-30000023-6','3764103151','CTA-1023','0110012300182137000299','Banco Patagonia','Claudia Romero','dni_23_frente.jpg','2025-03-24 08:00:00','2026-03-24 09:00:00'),
+(24,'Castro','Jorge','30000024',NULL,NULL,'3764103288',NULL,NULL,NULL,NULL,NULL,'2025-03-25 08:00:00','2026-03-25 09:00:00'),
+(25,'Ferreira','Carolina','30000025','20-30000025-5','27-30000025-8',NULL,'CTA-1025','0110012300197975000325','Banco BBVA','Carolina Ferreira','dni_25_frente.jpg','2025-03-26 08:00:00','2026-03-26 09:00:00'),
+(26,'Maciel','Alejandro','30000026','20-30000026-6','27-30000026-9','3764103562','CTA-1026','0110012300205894000338','Banco Santander','Alejandro Maciel',NULL,'2025-03-27 08:00:00','2026-03-27 09:00:00'),
+(27,'Toledo','Maria','30000027',NULL,'27-30000027-0','3764103699',NULL,NULL,NULL,NULL,'dni_27_frente.jpg','2025-03-28 08:00:00','2026-03-28 09:00:00'),
+(28,'Barrios','Miguel','30000028','20-30000028-8',NULL,'3764103836','CTA-1028','0110012300221732000364','Banco Macro','Miguel Barrios',NULL,'2025-03-01 08:00:00','2026-03-01 09:00:00'),
+(29,'Martinez','Marina','30000029','20-30000029-9','27-30000029-2','3764103973','CTA-1029','0110012300229651000377','Banco Patagonia','Marina Martinez','dni_29_frente.jpg','2025-03-02 08:00:00','2026-03-02 09:00:00'),
+(30,'Alvarez','Eduardo','30000030',NULL,'27-30000030-3',NULL,NULL,NULL,NULL,NULL,NULL,'2025-03-03 08:00:00','2026-03-03 09:00:00'),
+(31,'Vega','Ana','30000031','20-30000031-1','27-30000031-4','3764104247','CTA-1031','0110012300245489000403','Banco BBVA','Ana Vega','dni_31_frente.jpg','2025-03-04 08:00:00','2026-03-04 09:00:00'),
+(32,'Escobar','Andres','30000032','20-30000032-2',NULL,'3764104384','CTA-1032','0110012300253408000416','Banco Santander','Andres Escobar',NULL,'2025-03-05 08:00:00','2026-03-05 09:00:00'),
+(33,'Ledesma','Natalia','30000033',NULL,'27-30000033-6','3764104521',NULL,NULL,NULL,NULL,'dni_33_frente.jpg','2025-03-06 08:00:00','2026-03-06 09:00:00'),
+(34,'Saucedo','Felipe','30000034','20-30000034-4','27-30000034-7','3764104658','CTA-1034','0110012300269246000442','Banco Macro','Felipe Saucedo',NULL,'2025-03-07 08:00:00','2026-03-07 09:00:00'),
+(35,'Aguilera','Laura','30000035','20-30000035-5','27-30000035-8',NULL,'CTA-1035','0110012300277165000455','Banco Patagonia','Laura Aguilera','dni_35_frente.jpg','2025-03-08 08:00:00','2026-03-08 09:00:00'),
+(36,'Lopez','Ricardo','30000036',NULL,NULL,'3764104932',NULL,NULL,NULL,NULL,NULL,'2025-03-09 08:00:00','2026-03-09 09:00:00'),
+(37,'Ruiz','Silvia','30000037','20-30000037-7','27-30000037-0','3764105069','CTA-1037','0110012300293003000481','Banco BBVA','Silvia Ruiz','dni_37_frente.jpg','2025-03-10 08:00:00','2026-03-10 09:00:00'),
+(38,'Sosa','Nicolas','30000038','20-30000038-8','27-30000038-1','3764105206','CTA-1038','0110012300300922000494','Banco Santander','Nicolas Sosa',NULL,'2025-03-11 08:00:00','2026-03-11 09:00:00'),
+(39,'Duarte','Sofia','30000039',NULL,'27-30000039-2','3764105343',NULL,NULL,NULL,NULL,'dni_39_frente.jpg','2025-03-12 08:00:00','2026-03-12 09:00:00'),
+(40,'Krause','Fernando','30000040','20-30000040-0',NULL,NULL,'CTA-1040','0110012300316760000520','Banco Macro','Fernando Krause',NULL,'2025-03-13 08:00:00','2026-03-13 09:00:00'),
+(41,'Rios','Alicia','30000041','20-30000041-1','27-30000041-4','3764105617','CTA-1041','0110012300324679000533','Banco Patagonia','Alicia Rios','dni_41_frente.jpg','2025-03-14 08:00:00','2026-03-14 09:00:00'),
+(42,'Zapata','Santiago','30000042',NULL,'27-30000042-5','3764105754',NULL,NULL,NULL,NULL,NULL,'2025-03-15 08:00:00','2026-03-15 09:00:00'),
+(43,'Fernandez','Valentina','30000043','20-30000043-3','27-30000043-6','3764105891','CTA-1043','0110012300340517000559','Banco BBVA','Valentina Fernandez','dni_43_frente.jpg','2025-03-16 08:00:00','2026-03-16 09:00:00'),
+(44,'Torres','Hugo','30000044','20-30000044-4',NULL,'3764106028','CTA-1044','0110012300348436000572','Banco Santander','Hugo Torres',NULL,'2025-03-17 08:00:00','2026-03-17 09:00:00'),
+(45,'Ortega','Monica','30000045',NULL,'27-30000045-8',NULL,NULL,NULL,NULL,NULL,'dni_45_frente.jpg','2025-03-18 08:00:00','2026-03-18 09:00:00'),
+(46,'Cardozo','Emilio','30000046','20-30000046-6','27-30000046-9','3764106302','CTA-1046','0110012300364274000598','Banco Macro','Emilio Cardozo',NULL,'2025-03-19 08:00:00','2026-03-19 09:00:00'),
+(47,'Jara','Camila','30000047','20-30000047-7','27-30000047-0','3764106439','CTA-1047','0110012300372193000611','Banco Patagonia','Camila Jara','dni_47_frente.jpg','2025-03-20 08:00:00','2026-03-20 09:00:00'),
+(48,'Quiroga','Oscar','30000048',NULL,NULL,'3764106576',NULL,NULL,NULL,NULL,NULL,'2025-03-21 08:00:00','2026-03-21 09:00:00'),
+(49,'Yegros','Patricia','30000049','20-30000049-9','27-30000049-2','3764106713','CTA-1049','0110012300388031000637','Banco BBVA','Patricia Yegros','dni_49_frente.jpg','2025-03-22 08:00:00','2026-03-22 09:00:00'),
+(50,'Garcia','Juan','30000050','20-30000050-0','27-30000050-3',NULL,'CTA-1050','0110012300395950000650','Banco Santander','Juan Garcia',NULL,'2025-03-23 08:00:00','2026-03-23 09:00:00');
+ALTER TABLE `personas` AUTO_INCREMENT = 51;
+
+-- ============================================================================
+-- 3. INMUEBLES (50) - Persona 1-N Inmueble
+-- ============================================================================
+INSERT INTO `inmuebles` (`id`,`propietario_id`,`alias`,`tipo`,`nombre_edificio`,`calle`,`numeracion`,`piso`,`departamento`,`unidad_funcional`,`superficie`,`cantidad_ambientes`,`cantidad_dormitorios`,`cantidad_banios`,`cochera`,`quincho`,`parrilla`,`sum`,`piscina`,`gimnasio`,`solarium`,`vigilancia`,`jardin`,`lavanderia`,`terraza`,`cancha_de_deportes`,`sauna`,`sala_de_reuniones`,`lockers_de_paqueteria`,`espacio_coworking`,`sala_de_juegos`,`created_at`,`updated_at`) VALUES
+(1,1,'Inmueble Casa 01 Prop01','Casa',NULL,'Calle Bolivar',1007,NULL,NULL,'UF-001','43m2',2,2,2,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,'2025-04-02 08:00:00','2026-04-02 09:00:00'),
+(2,1,'Inmueble Local Comercial 02 Prop01','Local Comercial',NULL,'Av. Mitre',1014,3,'C','UF-002','46m2',3,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,'2025-04-03 08:00:00','2026-04-03 09:00:00'),
+(3,1,'Inmueble Duplex 03 Prop01','Duplex','Edificio Avenida 3','Calle Junin',1021,4,'D','UF-003','49m2',4,1,2,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,'2025-04-04 08:00:00','2026-04-04 09:00:00'),
+(4,2,'Inmueble PH 04 Prop02','PH',NULL,'Av. Uruguay',1028,5,'E','UF-004','52m2',1,2,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,'2025-04-05 08:00:00','2026-04-05 09:00:00'),
+(5,2,'Inmueble Departamento 05 Prop02','Departamento','Torre Mitre 5','Calle San Martin',1035,6,'A','UF-005','55m2',2,3,2,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,'2025-04-06 08:00:00','2026-04-06 09:00:00'),
+(6,2,'Inmueble Casa 06 Prop02','Casa',NULL,'Av. Lopez y Planes',1042,NULL,NULL,'UF-006','58m2',3,1,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,'2025-04-07 08:00:00','2026-04-07 09:00:00'),
+(7,3,'Inmueble Local Comercial 07 Prop03','Local Comercial',NULL,'Calle Entre Rios',1049,8,'C','UF-007','61m2',4,0,2,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,'2025-04-08 08:00:00','2026-04-08 09:00:00'),
+(8,3,'Inmueble Duplex 08 Prop03','Duplex','Torre Amanecer 8','Av. Tacuari',1056,9,'D','UF-008','64m2',1,3,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,'2025-04-09 08:00:00','2026-04-09 09:00:00'),
+(9,3,'Inmueble PH 09 Prop03','PH',NULL,'Calle Cordoba',1063,10,'E','UF-009','67m2',2,1,2,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,'2025-04-10 08:00:00','2026-04-10 09:00:00'),
+(10,4,'Inmueble Departamento 10 Prop04','Departamento','Torre Costanera 10','Av. Roque Perez',1070,1,'A','UF-010','70m2',3,2,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,'2025-04-11 08:00:00','2026-04-11 09:00:00'),
+(11,4,'Inmueble Casa 11 Prop04','Casa',NULL,'Calle Buenos Aires',1077,NULL,NULL,'UF-011','73m2',4,3,2,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,'2025-04-12 08:00:00','2026-04-12 09:00:00'),
+(12,4,'Inmueble Local Comercial 12 Prop04','Local Comercial',NULL,'Av. Centenario',1084,3,'C','UF-012','76m2',1,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,'2025-04-13 08:00:00','2026-04-13 09:00:00'),
+(13,5,'Inmueble Duplex 13 Prop05','Duplex','Edificio Avenida 13','Calle Jujuy',1091,4,'D','UF-013','79m2',2,2,2,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,'2025-04-14 08:00:00','2026-04-14 09:00:00'),
+(14,5,'Inmueble PH 14 Prop05','PH',NULL,'Av. Tambor de Tacuari',1098,5,'E','UF-014','82m2',3,3,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,'2025-04-15 08:00:00','2026-04-15 09:00:00'),
+(15,5,'Inmueble Departamento 15 Prop05','Departamento','Torre Mitre 15','Calle Salta',1105,6,'A','UF-015','85m2',4,1,2,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,'2025-04-16 08:00:00','2026-04-16 09:00:00'),
+(16,6,'Inmueble Casa 16 Prop06','Casa',NULL,'Av. Lavalle',1112,NULL,NULL,'UF-016','88m2',1,2,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,'2025-04-17 08:00:00','2026-04-17 09:00:00'),
+(17,6,'Inmueble Local Comercial 17 Prop06','Local Comercial',NULL,'Calle Catamarca',1119,8,'C','UF-017','91m2',2,0,2,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,'2025-04-18 08:00:00','2026-04-18 09:00:00'),
+(18,6,'Inmueble Duplex 18 Prop06','Duplex','Torre Amanecer 18','Av. Ituzaingo',1126,9,'D','UF-018','94m2',3,1,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,'2025-04-19 08:00:00','2026-04-19 09:00:00'),
+(19,7,'Inmueble PH 19 Prop07','PH',NULL,'Calle La Rioja',1133,10,'E','UF-019','97m2',4,2,2,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,'2025-04-20 08:00:00','2026-04-20 09:00:00'),
+(20,7,'Inmueble Departamento 20 Prop07','Departamento','Torre Costanera 20','Av. Corrientes',1140,1,'A','UF-020','100m2',1,3,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,'2025-04-21 08:00:00','2026-04-21 09:00:00'),
+(21,7,'Inmueble Casa 21 Prop07','Casa',NULL,'Calle Bolivar',1147,NULL,NULL,'UF-021','103m2',2,1,2,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,'2025-04-22 08:00:00','2026-04-22 09:00:00'),
+(22,8,'Inmueble Local Comercial 22 Prop08','Local Comercial',NULL,'Av. Mitre',1154,3,'C','UF-022','106m2',3,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,'2025-04-23 08:00:00','2026-04-23 09:00:00'),
+(23,8,'Inmueble Duplex 23 Prop08','Duplex','Edificio Avenida 23','Calle Junin',1161,4,'D','UF-023','109m2',4,3,2,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,'2025-04-24 08:00:00','2026-04-24 09:00:00'),
+(24,8,'Inmueble PH 24 Prop08','PH',NULL,'Av. Uruguay',1168,5,'E','UF-024','112m2',1,1,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,'2025-04-25 08:00:00','2026-04-25 09:00:00'),
+(25,9,'Inmueble Departamento 25 Prop09','Departamento','Torre Mitre 25','Calle San Martin',1175,6,'A','UF-025','115m2',2,2,2,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,'2025-04-26 08:00:00','2026-04-26 09:00:00'),
+(26,9,'Inmueble Casa 26 Prop09','Casa',NULL,'Av. Lopez y Planes',1182,NULL,NULL,'UF-026','118m2',3,3,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,'2025-04-27 08:00:00','2026-04-27 09:00:00'),
+(27,9,'Inmueble Local Comercial 27 Prop09','Local Comercial',NULL,'Calle Entre Rios',1189,8,'C','UF-027','121m2',4,0,2,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,'2025-04-28 08:00:00','2026-04-28 09:00:00'),
+(28,10,'Inmueble Duplex 28 Prop10','Duplex','Torre Amanecer 28','Av. Tacuari',1196,9,'D','UF-028','124m2',1,2,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,'2025-04-01 08:00:00','2026-04-01 09:00:00'),
+(29,10,'Inmueble PH 29 Prop10','PH',NULL,'Calle Cordoba',1203,10,'E','UF-029','127m2',2,3,2,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,'2025-04-02 08:00:00','2026-04-02 09:00:00'),
+(30,10,'Inmueble Departamento 30 Prop10','Departamento','Torre Costanera 30','Av. Roque Perez',1210,1,'A','UF-030','130m2',3,1,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,'2025-04-03 08:00:00','2026-04-03 09:00:00'),
+(31,11,'Inmueble Casa 31 Prop11','Casa',NULL,'Calle Buenos Aires',1217,NULL,NULL,'UF-031','133m2',4,2,2,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,'2025-04-04 08:00:00','2026-04-04 09:00:00'),
+(32,11,'Inmueble Local Comercial 32 Prop11','Local Comercial',NULL,'Av. Centenario',1224,3,'C','UF-032','136m2',1,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,'2025-04-05 08:00:00','2026-04-05 09:00:00'),
+(33,12,'Inmueble Duplex 33 Prop12','Duplex','Edificio Avenida 33','Calle Jujuy',1231,4,'D','UF-033','139m2',2,1,2,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,'2025-04-06 08:00:00','2026-04-06 09:00:00'),
+(34,12,'Inmueble PH 34 Prop12','PH',NULL,'Av. Tambor de Tacuari',1238,5,'E','UF-034','142m2',3,2,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,'2025-04-07 08:00:00','2026-04-07 09:00:00'),
+(35,13,'Inmueble Departamento 35 Prop13','Departamento','Torre Mitre 35','Calle Salta',1245,6,'A','UF-035','145m2',4,3,2,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,'2025-04-08 08:00:00','2026-04-08 09:00:00'),
+(36,13,'Inmueble Casa 36 Prop13','Casa',NULL,'Av. Lavalle',1252,NULL,NULL,'UF-036','148m2',1,1,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,'2025-04-09 08:00:00','2026-04-09 09:00:00'),
+(37,14,'Inmueble Local Comercial 37 Prop14','Local Comercial',NULL,'Calle Catamarca',1259,8,'C','UF-037','151m2',2,0,2,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,'2025-04-10 08:00:00','2026-04-10 09:00:00'),
+(38,14,'Inmueble Duplex 38 Prop14','Duplex','Torre Amanecer 38','Av. Ituzaingo',1266,9,'D','UF-038','154m2',3,3,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,'2025-04-11 08:00:00','2026-04-11 09:00:00'),
+(39,15,'Inmueble PH 39 Prop15','PH',NULL,'Calle La Rioja',1273,10,'E','UF-039','157m2',4,1,2,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,'2025-04-12 08:00:00','2026-04-12 09:00:00'),
+(40,15,'Inmueble Departamento 40 Prop15','Departamento','Torre Costanera 40','Av. Corrientes',1280,1,'A','UF-040','160m2',1,2,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,'2025-04-13 08:00:00','2026-04-13 09:00:00'),
+(41,16,'Inmueble Casa 41 Prop16','Casa',NULL,'Calle Bolivar',1287,NULL,NULL,'UF-041','163m2',2,3,2,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,'2025-04-14 08:00:00','2026-04-14 09:00:00'),
+(42,16,'Inmueble Local Comercial 42 Prop16','Local Comercial',NULL,'Av. Mitre',1294,3,'C','UF-042','166m2',3,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,'2025-04-15 08:00:00','2026-04-15 09:00:00'),
+(43,17,'Inmueble Duplex 43 Prop17','Duplex','Edificio Avenida 43','Calle Junin',1301,4,'D','UF-043','169m2',4,2,2,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,'2025-04-16 08:00:00','2026-04-16 09:00:00'),
+(44,17,'Inmueble PH 44 Prop17','PH',NULL,'Av. Uruguay',1308,5,'E','UF-044','172m2',1,3,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,'2025-04-17 08:00:00','2026-04-17 09:00:00'),
+(45,18,'Inmueble Departamento 45 Prop18','Departamento','Torre Mitre 45','Calle San Martin',1315,6,'A','UF-045','175m2',2,1,2,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,'2025-04-18 08:00:00','2026-04-18 09:00:00'),
+(46,18,'Inmueble Casa 46 Prop18','Casa',NULL,'Av. Lopez y Planes',1322,NULL,NULL,'UF-046','178m2',3,2,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,'2025-04-19 08:00:00','2026-04-19 09:00:00'),
+(47,19,'Inmueble Local Comercial 47 Prop19','Local Comercial',NULL,'Calle Entre Rios',1329,8,'C','UF-047','181m2',4,0,2,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,'2025-04-20 08:00:00','2026-04-20 09:00:00'),
+(48,19,'Inmueble Duplex 48 Prop19','Duplex','Torre Amanecer 48','Av. Tacuari',1336,9,'D','UF-048','184m2',1,1,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,'2025-04-21 08:00:00','2026-04-21 09:00:00'),
+(49,20,'Inmueble PH 49 Prop20','PH',NULL,'Calle Cordoba',1343,10,'E','UF-049','187m2',2,2,2,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,'2025-04-22 08:00:00','2026-04-22 09:00:00'),
+(50,20,'Inmueble Departamento 50 Prop20','Departamento','Torre Costanera 50','Av. Roque Perez',1350,1,'A','UF-050','190m2',3,3,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,'2025-04-23 08:00:00','2026-04-23 09:00:00');
+ALTER TABLE `inmuebles` AUTO_INCREMENT = 51;
+
+-- ============================================================================
+-- 4. CONTRATOS (50) - Inmueble 1-N Contrato
+-- ============================================================================
+INSERT INTO `contratos` (`id`,`inmueble_id`,`alias`,`fecha_inicio`,`fecha_finalizacion`,`monto_inicial`,`monto_actual`,`periodo_actualizacion`,`indice_actualizacion`,`estado`,`created_at`,`updated_at`) VALUES
+(1,1,'Contrato Alquiler N 001 Inm01','2024-02-02','2026-02-02',155000.00,187000.00,'Semestral','IPC','inactivo','2025-05-02 08:00:00','2026-05-02 09:00:00'),
+(2,1,'Contrato Alquiler N 002 Inm01','2024-03-03','2026-03-03',160000.00,194000.00,'Anual','Casa Propia','rescindido','2025-05-03 08:00:00','2026-05-03 09:00:00'),
+(3,2,'Contrato Alquiler N 003 Inm02','2024-04-04','2026-04-04',165000.00,201000.00,'Cuatrimestral','UVA','activo','2025-05-04 08:00:00','2026-05-04 09:00:00'),
+(4,2,'Contrato Alquiler N 004 Inm02','2024-05-05','2026-05-05',170000.00,208000.00,'Trimestral','ICL','inactivo','2025-05-05 08:00:00','2026-05-05 09:00:00'),
+(5,3,'Contrato Alquiler N 005 Inm03','2024-06-06','2026-06-06',175000.00,205000.00,'Semestral','IPC','rescindido','2025-05-06 08:00:00','2026-05-06 09:00:00'),
+(6,3,'Contrato Alquiler N 006 Inm03','2024-07-07','2026-07-07',180000.00,212000.00,'Anual','Casa Propia','activo','2025-05-07 08:00:00','2026-05-07 09:00:00'),
+(7,4,'Contrato Alquiler N 007 Inm04','2024-08-08','2026-08-08',185000.00,219000.00,'Cuatrimestral','UVA','inactivo','2025-05-08 08:00:00','2026-05-08 09:00:00'),
+(8,4,'Contrato Alquiler N 008 Inm04','2024-09-09','2026-09-09',190000.00,226000.00,'Trimestral','ICL','rescindido','2025-05-09 08:00:00','2026-05-09 09:00:00'),
+(9,5,'Contrato Alquiler N 009 Inm05','2024-10-10','2026-10-10',195000.00,233000.00,'Semestral','IPC','activo','2025-05-10 08:00:00','2026-05-10 09:00:00'),
+(10,5,'Contrato Alquiler N 010 Inm05','2024-11-11','2026-11-11',200000.00,230000.00,'Anual','Casa Propia','inactivo','2025-05-11 08:00:00','2026-05-11 09:00:00'),
+(11,6,'Contrato Alquiler N 011 Inm06','2024-12-12','2026-12-12',205000.00,237000.00,'Cuatrimestral','UVA','rescindido','2025-05-12 08:00:00','2026-05-12 09:00:00'),
+(12,6,'Contrato Alquiler N 012 Inm06','2024-01-13','2026-01-13',210000.00,244000.00,'Trimestral','ICL','activo','2025-05-13 08:00:00','2026-05-13 09:00:00'),
+(13,7,'Contrato Alquiler N 013 Inm07','2024-02-14','2026-02-14',215000.00,251000.00,'Semestral','IPC','inactivo','2025-05-14 08:00:00','2026-05-14 09:00:00'),
+(14,7,'Contrato Alquiler N 014 Inm07','2024-03-15','2026-03-15',220000.00,258000.00,'Anual','Casa Propia','rescindido','2025-05-15 08:00:00','2026-05-15 09:00:00'),
+(15,8,'Contrato Alquiler N 015 Inm08','2024-04-16','2026-04-16',225000.00,255000.00,'Cuatrimestral','UVA','activo','2025-05-16 08:00:00','2026-05-16 09:00:00'),
+(16,8,'Contrato Alquiler N 016 Inm08','2024-05-17','2026-05-17',230000.00,262000.00,'Trimestral','ICL','inactivo','2025-05-17 08:00:00','2026-05-17 09:00:00'),
+(17,9,'Contrato Alquiler N 017 Inm09','2024-06-18','2026-06-18',235000.00,269000.00,'Semestral','IPC','rescindido','2025-05-18 08:00:00','2026-05-18 09:00:00'),
+(18,9,'Contrato Alquiler N 018 Inm09','2024-07-19','2026-07-19',240000.00,276000.00,'Anual','Casa Propia','activo','2025-05-19 08:00:00','2026-05-19 09:00:00'),
+(19,10,'Contrato Alquiler N 019 Inm10','2024-08-20','2026-08-20',245000.00,283000.00,'Cuatrimestral','UVA','inactivo','2025-05-20 08:00:00','2026-05-20 09:00:00'),
+(20,10,'Contrato Alquiler N 020 Inm10','2024-09-21','2026-09-21',250000.00,280000.00,'Trimestral','ICL','rescindido','2025-05-21 08:00:00','2026-05-21 09:00:00'),
+(21,11,'Contrato Alquiler N 021 Inm11','2024-10-22','2026-10-22',255000.00,287000.00,'Semestral','IPC','activo','2025-05-22 08:00:00','2026-05-22 09:00:00'),
+(22,12,'Contrato Alquiler N 022 Inm12','2024-11-23','2026-11-23',260000.00,294000.00,'Anual','Casa Propia','inactivo','2025-05-23 08:00:00','2026-05-23 09:00:00'),
+(23,13,'Contrato Alquiler N 023 Inm13','2024-12-24','2026-12-24',265000.00,301000.00,'Cuatrimestral','UVA','rescindido','2025-05-24 08:00:00','2026-05-24 09:00:00'),
+(24,14,'Contrato Alquiler N 024 Inm14','2024-01-25','2026-01-25',270000.00,308000.00,'Trimestral','ICL','activo','2025-05-25 08:00:00','2026-05-25 09:00:00'),
+(25,15,'Contrato Alquiler N 025 Inm15','2024-02-26','2026-02-26',275000.00,305000.00,'Semestral','IPC','inactivo','2025-05-26 08:00:00','2026-05-26 09:00:00'),
+(26,16,'Contrato Alquiler N 026 Inm16','2024-03-27','2026-03-27',280000.00,312000.00,'Anual','Casa Propia','rescindido','2025-05-27 08:00:00','2026-05-27 09:00:00'),
+(27,17,'Contrato Alquiler N 027 Inm17','2024-04-28','2026-04-28',285000.00,319000.00,'Cuatrimestral','UVA','activo','2025-05-28 08:00:00','2026-05-28 09:00:00'),
+(28,18,'Contrato Alquiler N 028 Inm18','2024-05-01','2026-05-01',290000.00,326000.00,'Trimestral','ICL','inactivo','2025-05-01 08:00:00','2026-05-01 09:00:00'),
+(29,19,'Contrato Alquiler N 029 Inm19','2024-06-02','2026-06-02',295000.00,333000.00,'Semestral','IPC','rescindido','2025-05-02 08:00:00','2026-05-02 09:00:00'),
+(30,20,'Contrato Alquiler N 030 Inm20','2024-07-03','2026-07-03',300000.00,330000.00,'Anual','Casa Propia','activo','2025-05-03 08:00:00','2026-05-03 09:00:00'),
+(31,21,'Contrato Alquiler N 031 Inm21','2024-08-04','2026-08-04',305000.00,337000.00,'Cuatrimestral','UVA','inactivo','2025-05-04 08:00:00','2026-05-04 09:00:00'),
+(32,22,'Contrato Alquiler N 032 Inm22','2024-09-05','2026-09-05',310000.00,344000.00,'Trimestral','ICL','rescindido','2025-05-05 08:00:00','2026-05-05 09:00:00'),
+(33,23,'Contrato Alquiler N 033 Inm23','2024-10-06','2026-10-06',315000.00,351000.00,'Semestral','IPC','activo','2025-05-06 08:00:00','2026-05-06 09:00:00'),
+(34,24,'Contrato Alquiler N 034 Inm24','2024-11-07','2026-11-07',320000.00,358000.00,'Anual','Casa Propia','inactivo','2025-05-07 08:00:00','2026-05-07 09:00:00'),
+(35,25,'Contrato Alquiler N 035 Inm25','2024-12-08','2026-12-08',325000.00,355000.00,'Cuatrimestral','UVA','rescindido','2025-05-08 08:00:00','2026-05-08 09:00:00'),
+(36,26,'Contrato Alquiler N 036 Inm26','2024-01-09','2026-01-09',330000.00,362000.00,'Trimestral','ICL','activo','2025-05-09 08:00:00','2026-05-09 09:00:00'),
+(37,27,'Contrato Alquiler N 037 Inm27','2024-02-10','2026-02-10',335000.00,369000.00,'Semestral','IPC','inactivo','2025-05-10 08:00:00','2026-05-10 09:00:00'),
+(38,28,'Contrato Alquiler N 038 Inm28','2024-03-11','2026-03-11',340000.00,376000.00,'Anual','Casa Propia','rescindido','2025-05-11 08:00:00','2026-05-11 09:00:00'),
+(39,29,'Contrato Alquiler N 039 Inm29','2024-04-12','2026-04-12',345000.00,383000.00,'Cuatrimestral','UVA','activo','2025-05-12 08:00:00','2026-05-12 09:00:00'),
+(40,30,'Contrato Alquiler N 040 Inm30','2024-05-13','2026-05-13',350000.00,380000.00,'Trimestral','ICL','inactivo','2025-05-13 08:00:00','2026-05-13 09:00:00'),
+(41,31,'Contrato Alquiler N 041 Inm31','2024-06-14','2026-06-14',355000.00,387000.00,'Semestral','IPC','rescindido','2025-05-14 08:00:00','2026-05-14 09:00:00'),
+(42,32,'Contrato Alquiler N 042 Inm32','2024-07-15','2026-07-15',360000.00,394000.00,'Anual','Casa Propia','activo','2025-05-15 08:00:00','2026-05-15 09:00:00'),
+(43,33,'Contrato Alquiler N 043 Inm33','2024-08-16','2026-08-16',365000.00,401000.00,'Cuatrimestral','UVA','inactivo','2025-05-16 08:00:00','2026-05-16 09:00:00'),
+(44,34,'Contrato Alquiler N 044 Inm34','2024-09-17','2026-09-17',370000.00,408000.00,'Trimestral','ICL','rescindido','2025-05-17 08:00:00','2026-05-17 09:00:00'),
+(45,35,'Contrato Alquiler N 045 Inm35','2024-10-18','2026-10-18',375000.00,405000.00,'Semestral','IPC','activo','2025-05-18 08:00:00','2026-05-18 09:00:00'),
+(46,36,'Contrato Alquiler N 046 Inm36','2024-11-19','2026-11-19',380000.00,412000.00,'Anual','Casa Propia','inactivo','2025-05-19 08:00:00','2026-05-19 09:00:00'),
+(47,37,'Contrato Alquiler N 047 Inm37','2024-12-20','2026-12-20',385000.00,419000.00,'Cuatrimestral','UVA','rescindido','2025-05-20 08:00:00','2026-05-20 09:00:00'),
+(48,38,'Contrato Alquiler N 048 Inm38','2024-01-21','2026-01-21',390000.00,426000.00,'Trimestral','ICL','activo','2025-05-21 08:00:00','2026-05-21 09:00:00'),
+(49,39,'Contrato Alquiler N 049 Inm39','2024-02-22','2026-02-22',395000.00,433000.00,'Semestral','IPC','inactivo','2025-05-22 08:00:00','2026-05-22 09:00:00'),
+(50,40,'Contrato Alquiler N 050 Inm40','2024-03-23','2026-03-23',400000.00,430000.00,'Anual','Casa Propia','rescindido','2025-05-23 08:00:00','2026-05-23 09:00:00');
+ALTER TABLE `contratos` AUTO_INCREMENT = 51;
+
+-- ============================================================================
+-- 5. CONTRATO_INQUILINO (50) - Contrato N-M Persona (inquilinos)
+-- cont 1-10: 2 inquilinos | cont 11-40: 1 | cont 41-50: 0
+-- ============================================================================
+INSERT INTO `contrato_inquilino` (`contrato_id`,`persona_id`,`created_at`,`updated_at`) VALUES
+(1,21,'2025-06-23 08:00:00','2026-06-23 09:00:00'),
+(1,31,'2025-06-05 08:00:00','2026-06-05 09:00:00'),
+(2,22,'2025-06-25 08:00:00','2026-06-25 09:00:00'),
+(2,32,'2025-06-07 08:00:00','2026-06-07 09:00:00'),
+(3,23,'2025-06-27 08:00:00','2026-06-27 09:00:00'),
+(3,33,'2025-06-09 08:00:00','2026-06-09 09:00:00'),
+(4,24,'2025-06-01 08:00:00','2026-06-01 09:00:00'),
+(4,34,'2025-06-11 08:00:00','2026-06-11 09:00:00'),
+(5,25,'2025-06-03 08:00:00','2026-06-03 09:00:00'),
+(5,35,'2025-06-13 08:00:00','2026-06-13 09:00:00'),
+(6,26,'2025-06-05 08:00:00','2026-06-05 09:00:00'),
+(6,36,'2025-06-15 08:00:00','2026-06-15 09:00:00'),
+(7,27,'2025-06-07 08:00:00','2026-06-07 09:00:00'),
+(7,37,'2025-06-17 08:00:00','2026-06-17 09:00:00'),
+(8,28,'2025-06-09 08:00:00','2026-06-09 09:00:00'),
+(8,38,'2025-06-19 08:00:00','2026-06-19 09:00:00'),
+(9,29,'2025-06-11 08:00:00','2026-06-11 09:00:00'),
+(9,39,'2025-06-21 08:00:00','2026-06-21 09:00:00'),
+(10,30,'2025-06-13 08:00:00','2026-06-13 09:00:00'),
+(10,40,'2025-06-23 08:00:00','2026-06-23 09:00:00'),
+(11,34,'2025-06-18 08:00:00','2026-06-18 09:00:00'),
+(12,37,'2025-06-22 08:00:00','2026-06-22 09:00:00'),
+(13,40,'2025-06-26 08:00:00','2026-06-26 09:00:00'),
+(14,23,'2025-06-10 08:00:00','2026-06-10 09:00:00'),
+(15,26,'2025-06-14 08:00:00','2026-06-14 09:00:00'),
+(16,29,'2025-06-18 08:00:00','2026-06-18 09:00:00'),
+(17,32,'2025-06-22 08:00:00','2026-06-22 09:00:00'),
+(18,35,'2025-06-26 08:00:00','2026-06-26 09:00:00'),
+(19,38,'2025-06-02 08:00:00','2026-06-02 09:00:00'),
+(20,21,'2025-06-14 08:00:00','2026-06-14 09:00:00'),
+(21,24,'2025-06-18 08:00:00','2026-06-18 09:00:00'),
+(22,27,'2025-06-22 08:00:00','2026-06-22 09:00:00'),
+(23,30,'2025-06-26 08:00:00','2026-06-26 09:00:00'),
+(24,33,'2025-06-02 08:00:00','2026-06-02 09:00:00'),
+(25,36,'2025-06-06 08:00:00','2026-06-06 09:00:00'),
+(26,39,'2025-06-10 08:00:00','2026-06-10 09:00:00'),
+(27,22,'2025-06-22 08:00:00','2026-06-22 09:00:00'),
+(28,25,'2025-06-26 08:00:00','2026-06-26 09:00:00'),
+(29,28,'2025-06-02 08:00:00','2026-06-02 09:00:00'),
+(30,31,'2025-06-06 08:00:00','2026-06-06 09:00:00'),
+(31,34,'2025-06-10 08:00:00','2026-06-10 09:00:00'),
+(32,37,'2025-06-14 08:00:00','2026-06-14 09:00:00'),
+(33,40,'2025-06-18 08:00:00','2026-06-18 09:00:00'),
+(34,23,'2025-06-02 08:00:00','2026-06-02 09:00:00'),
+(35,26,'2025-06-06 08:00:00','2026-06-06 09:00:00'),
+(36,29,'2025-06-10 08:00:00','2026-06-10 09:00:00'),
+(37,32,'2025-06-14 08:00:00','2026-06-14 09:00:00'),
+(38,35,'2025-06-18 08:00:00','2026-06-18 09:00:00'),
+(39,38,'2025-06-22 08:00:00','2026-06-22 09:00:00'),
+(40,21,'2025-06-06 08:00:00','2026-06-06 09:00:00');
+
+-- ============================================================================
+-- 6. CONTRATO_GARANTE (50) - Contrato N-M Persona (garantes)
+-- cont 1: 3 garantes | cont 2-8: 2 | cont 9-41: 1 | cont 42-50: 0
+-- Incluye propietarios que tambien son garantes (multi-rol).
+-- ============================================================================
+INSERT INTO `contrato_garante` (`contrato_id`,`persona_id`,`created_at`,`updated_at`) VALUES
+(1,1,'2025-07-03 08:00:00','2026-07-03 09:00:00'),
+(1,2,'2025-07-04 08:00:00','2026-07-04 09:00:00'),
+(1,41,'2025-07-15 08:00:00','2026-07-15 09:00:00'),
+(2,2,'2025-07-05 08:00:00','2026-07-05 09:00:00'),
+(2,12,'2025-07-15 08:00:00','2026-07-15 09:00:00'),
+(3,3,'2025-07-07 08:00:00','2026-07-07 09:00:00'),
+(3,13,'2025-07-17 08:00:00','2026-07-17 09:00:00'),
+(4,4,'2025-07-09 08:00:00','2026-07-09 09:00:00'),
+(4,14,'2025-07-19 08:00:00','2026-07-19 09:00:00'),
+(5,5,'2025-07-11 08:00:00','2026-07-11 09:00:00'),
+(5,15,'2025-07-21 08:00:00','2026-07-21 09:00:00'),
+(6,6,'2025-07-13 08:00:00','2026-07-13 09:00:00'),
+(6,16,'2025-07-23 08:00:00','2026-07-23 09:00:00'),
+(7,7,'2025-07-15 08:00:00','2026-07-15 09:00:00'),
+(7,17,'2025-07-25 08:00:00','2026-07-25 09:00:00'),
+(8,8,'2025-07-17 08:00:00','2026-07-17 09:00:00'),
+(8,18,'2025-07-27 08:00:00','2026-07-27 09:00:00'),
+(9,15,'2025-07-25 08:00:00','2026-07-25 09:00:00'),
+(10,16,'2025-07-27 08:00:00','2026-07-27 09:00:00'),
+(11,17,'2025-07-01 08:00:00','2026-07-01 09:00:00'),
+(12,18,'2025-07-03 08:00:00','2026-07-03 09:00:00'),
+(13,19,'2025-07-05 08:00:00','2026-07-05 09:00:00'),
+(14,20,'2025-07-07 08:00:00','2026-07-07 09:00:00'),
+(15,1,'2025-07-17 08:00:00','2026-07-17 09:00:00'),
+(16,2,'2025-07-19 08:00:00','2026-07-19 09:00:00'),
+(17,3,'2025-07-21 08:00:00','2026-07-21 09:00:00'),
+(18,4,'2025-07-23 08:00:00','2026-07-23 09:00:00'),
+(19,5,'2025-07-25 08:00:00','2026-07-25 09:00:00'),
+(20,6,'2025-07-27 08:00:00','2026-07-27 09:00:00'),
+(21,7,'2025-07-01 08:00:00','2026-07-01 09:00:00'),
+(22,8,'2025-07-03 08:00:00','2026-07-03 09:00:00'),
+(23,9,'2025-07-05 08:00:00','2026-07-05 09:00:00'),
+(24,10,'2025-07-07 08:00:00','2026-07-07 09:00:00'),
+(25,11,'2025-07-09 08:00:00','2026-07-09 09:00:00'),
+(26,12,'2025-07-11 08:00:00','2026-07-11 09:00:00'),
+(27,13,'2025-07-13 08:00:00','2026-07-13 09:00:00'),
+(28,14,'2025-07-15 08:00:00','2026-07-15 09:00:00'),
+(29,15,'2025-07-17 08:00:00','2026-07-17 09:00:00'),
+(30,16,'2025-07-19 08:00:00','2026-07-19 09:00:00'),
+(31,17,'2025-07-21 08:00:00','2026-07-21 09:00:00'),
+(32,18,'2025-07-23 08:00:00','2026-07-23 09:00:00'),
+(33,19,'2025-07-25 08:00:00','2026-07-25 09:00:00'),
+(34,20,'2025-07-27 08:00:00','2026-07-27 09:00:00'),
+(35,1,'2025-07-09 08:00:00','2026-07-09 09:00:00'),
+(36,2,'2025-07-11 08:00:00','2026-07-11 09:00:00'),
+(37,3,'2025-07-13 08:00:00','2026-07-13 09:00:00'),
+(38,4,'2025-07-15 08:00:00','2026-07-15 09:00:00'),
+(39,5,'2025-07-17 08:00:00','2026-07-17 09:00:00'),
+(40,6,'2025-07-19 08:00:00','2026-07-19 09:00:00'),
+(41,7,'2025-07-21 08:00:00','2026-07-21 09:00:00');
+
+-- ============================================================================
+-- 7. LIQUIDACIONES (50) - Contrato 1-N Liquidacion (periodo DATE nullable)
+-- cont 1-10: 2 | cont 11-40: 1 | cont 41-50: 0
+-- Casos: pagada+rendida / pagada no rendida / impaga / periodo NULL
+-- ============================================================================
+INSERT INTO `liquidaciones` (`contrato_id`,`periodo`,`monto_alquiler`,`monto_expensa`,`pagado`,`rendido`,`created_at`,`updated_at`) VALUES
+(1,'2026-02-01',201500.00,16200.00,'2026-02-10','2026-02-15','2026-08-02 08:00:00','2026-08-02 09:00:00'),
+(1,'2026-03-01',203000.00,17400.00,'2026-03-10',NULL,'2026-08-03 08:00:00','2026-08-03 09:00:00'),
+(2,'2026-04-01',204500.00,18600.00,NULL,NULL,'2026-08-04 08:00:00','2026-08-04 09:00:00'),
+(2,'2026-05-01',206000.00,19800.00,'2026-05-10','2026-05-15','2026-08-05 08:00:00','2026-08-05 09:00:00'),
+(3,'2026-06-01',207500.00,21000.00,'2026-06-10',NULL,'2026-08-06 08:00:00','2026-08-06 09:00:00'),
+(3,'2026-07-01',209000.00,22200.00,NULL,NULL,'2026-08-07 08:00:00','2026-08-07 09:00:00'),
+(4,'2026-08-01',210500.00,15000.00,'2026-08-10','2026-08-15','2026-08-08 08:00:00','2026-08-08 09:00:00'),
+(4,'2026-09-01',212000.00,16200.00,'2026-09-10',NULL,'2026-08-09 08:00:00','2026-08-09 09:00:00'),
+(5,'2026-10-01',213500.00,17400.00,NULL,NULL,'2026-08-10 08:00:00','2026-08-10 09:00:00'),
+(5,NULL,215000.00,18600.00,'2026-11-10','2026-11-15','2026-08-11 08:00:00','2026-08-11 09:00:00'),
+(6,'2026-12-01',216500.00,19800.00,'2026-12-10',NULL,'2026-08-12 08:00:00','2026-08-12 09:00:00'),
+(6,'2026-01-01',218000.00,21000.00,NULL,NULL,'2026-08-13 08:00:00','2026-08-13 09:00:00'),
+(7,'2026-02-01',219500.00,22200.00,'2026-02-10','2026-02-15','2026-08-14 08:00:00','2026-08-14 09:00:00'),
+(7,'2026-03-01',221000.00,15000.00,'2026-03-10',NULL,'2026-08-15 08:00:00','2026-08-15 09:00:00'),
+(8,'2026-04-01',222500.00,16200.00,NULL,NULL,'2026-08-16 08:00:00','2026-08-16 09:00:00'),
+(8,'2026-05-01',224000.00,17400.00,'2026-05-10','2026-05-15','2026-08-17 08:00:00','2026-08-17 09:00:00'),
+(9,'2026-06-01',225500.00,18600.00,'2026-06-10',NULL,'2026-08-18 08:00:00','2026-08-18 09:00:00'),
+(9,'2026-07-01',227000.00,19800.00,NULL,NULL,'2026-08-19 08:00:00','2026-08-19 09:00:00'),
+(10,'2026-08-01',228500.00,21000.00,'2026-08-10','2026-08-15','2026-08-20 08:00:00','2026-08-20 09:00:00'),
+(10,NULL,230000.00,22200.00,'2026-09-10',NULL,'2026-08-21 08:00:00','2026-08-21 09:00:00'),
+(11,'2026-10-01',231500.00,15000.00,NULL,NULL,'2026-08-22 08:00:00','2026-08-22 09:00:00'),
+(12,'2026-11-01',233000.00,16200.00,'2026-11-10','2026-11-15','2026-08-23 08:00:00','2026-08-23 09:00:00'),
+(13,'2026-12-01',234500.00,17400.00,'2026-12-10',NULL,'2026-08-24 08:00:00','2026-08-24 09:00:00'),
+(14,'2026-01-01',236000.00,18600.00,NULL,NULL,'2026-08-25 08:00:00','2026-08-25 09:00:00'),
+(15,'2026-02-01',237500.00,19800.00,'2026-02-10','2026-02-15','2026-08-26 08:00:00','2026-08-26 09:00:00'),
+(16,'2026-03-01',239000.00,21000.00,'2026-03-10',NULL,'2026-08-27 08:00:00','2026-08-27 09:00:00'),
+(17,'2026-04-01',240500.00,22200.00,NULL,NULL,'2026-08-28 08:00:00','2026-08-28 09:00:00'),
+(18,'2026-05-01',242000.00,15000.00,'2026-05-10','2026-05-15','2026-08-01 08:00:00','2026-08-01 09:00:00'),
+(19,'2026-06-01',243500.00,16200.00,'2026-06-10',NULL,'2026-08-02 08:00:00','2026-08-02 09:00:00'),
+(20,NULL,245000.00,17400.00,NULL,NULL,'2026-08-03 08:00:00','2026-08-03 09:00:00'),
+(21,'2026-08-01',246500.00,18600.00,'2026-08-10','2026-08-15','2026-08-04 08:00:00','2026-08-04 09:00:00'),
+(22,'2026-09-01',248000.00,19800.00,'2026-09-10',NULL,'2026-08-05 08:00:00','2026-08-05 09:00:00'),
+(23,'2026-10-01',249500.00,21000.00,NULL,NULL,'2026-08-06 08:00:00','2026-08-06 09:00:00'),
+(24,'2026-11-01',251000.00,22200.00,'2026-11-10','2026-11-15','2026-08-07 08:00:00','2026-08-07 09:00:00'),
+(25,'2026-12-01',252500.00,15000.00,'2026-12-10',NULL,'2026-08-08 08:00:00','2026-08-08 09:00:00'),
+(26,'2026-01-01',254000.00,16200.00,NULL,NULL,'2026-08-09 08:00:00','2026-08-09 09:00:00'),
+(27,'2026-02-01',255500.00,17400.00,'2026-02-10','2026-02-15','2026-08-10 08:00:00','2026-08-10 09:00:00'),
+(28,'2026-03-01',257000.00,18600.00,'2026-03-10',NULL,'2026-08-11 08:00:00','2026-08-11 09:00:00'),
+(29,'2026-04-01',258500.00,19800.00,NULL,NULL,'2026-08-12 08:00:00','2026-08-12 09:00:00'),
+(30,NULL,260000.00,21000.00,'2026-05-10','2026-05-15','2026-08-13 08:00:00','2026-08-13 09:00:00'),
+(31,'2026-06-01',261500.00,22200.00,'2026-06-10',NULL,'2026-08-14 08:00:00','2026-08-14 09:00:00'),
+(32,'2026-07-01',263000.00,15000.00,NULL,NULL,'2026-08-15 08:00:00','2026-08-15 09:00:00'),
+(33,'2026-08-01',264500.00,16200.00,'2026-08-10','2026-08-15','2026-08-16 08:00:00','2026-08-16 09:00:00'),
+(34,'2026-09-01',266000.00,17400.00,'2026-09-10',NULL,'2026-08-17 08:00:00','2026-08-17 09:00:00'),
+(35,'2026-10-01',267500.00,18600.00,NULL,NULL,'2026-08-18 08:00:00','2026-08-18 09:00:00'),
+(36,'2026-11-01',269000.00,19800.00,'2026-11-10','2026-11-15','2026-08-19 08:00:00','2026-08-19 09:00:00'),
+(37,'2026-12-01',270500.00,21000.00,'2026-12-10',NULL,'2026-08-20 08:00:00','2026-08-20 09:00:00'),
+(38,'2026-01-01',272000.00,22200.00,NULL,NULL,'2026-08-21 08:00:00','2026-08-21 09:00:00'),
+(39,'2026-02-01',273500.00,15000.00,'2026-02-10','2026-02-15','2026-08-22 08:00:00','2026-08-22 09:00:00'),
+(40,NULL,275000.00,16200.00,'2026-03-10',NULL,'2026-08-23 08:00:00','2026-08-23 09:00:00');
+ALTER TABLE `liquidaciones` AUTO_INCREMENT = 51;
+
+-- ============================================================================
+-- 8. REPARACIONES (50) - Inmueble 1-N Reparacion
+-- inm 1-5: 3 | inm 6-40: 1 | inm 41-50: 0 | finalizada/en curso, con/sin comprobante
+-- ============================================================================
+INSERT INTO `reparaciones` (`inmueble_id`,`descripcion`,`fecha_inicio`,`fecha_finalizacion`,`monto`,`comprobante`,`created_at`,`updated_at`) VALUES
+(1,'Rotura de caneria #01 inm01','2026-02-02','2026-03-07',26000.00,'comprobante_01.pdf','2026-09-02 08:00:00','2026-09-02 09:00:00'),
+(1,'Pintura general #02 inm01','2026-03-03','2026-04-08',27000.00,'comprobante_02.pdf','2026-09-03 08:00:00','2026-09-03 09:00:00'),
+(1,'Arreglo electrico #03 inm01','2026-04-04',NULL,28000.00,NULL,'2026-09-04 08:00:00','2026-09-04 09:00:00'),
+(2,'Cambio de cerradura #04 inm02','2026-05-05','2026-06-10',29000.00,'comprobante_04.pdf','2026-09-05 08:00:00','2026-09-05 09:00:00'),
+(2,'Humedad en pared #05 inm02','2026-06-06','2026-07-11',30000.00,'comprobante_05.pdf','2026-09-06 08:00:00','2026-09-06 09:00:00'),
+(2,'Reparacion de piso #06 inm02','2026-07-07',NULL,31000.00,NULL,'2026-09-07 08:00:00','2026-09-07 09:00:00'),
+(3,'Falla de termotanque #07 inm03','2026-08-08','2026-09-13',32000.00,'comprobante_07.pdf','2026-09-08 08:00:00','2026-09-08 09:00:00'),
+(3,'Vidrio roto #08 inm03','2026-09-09','2026-01-14',33000.00,'comprobante_08.pdf','2026-09-09 08:00:00','2026-09-09 09:00:00'),
+(3,'Porton trabado #09 inm03','2026-01-10',NULL,34000.00,NULL,'2026-09-10 08:00:00','2026-09-10 09:00:00'),
+(4,'Filtracion en techo #10 inm04','2026-02-11','2026-03-16',35000.00,'comprobante_10.pdf','2026-09-11 08:00:00','2026-09-11 09:00:00'),
+(4,'Rotura de caneria #11 inm04','2026-03-12','2026-04-17',36000.00,'comprobante_11.pdf','2026-09-12 08:00:00','2026-09-12 09:00:00'),
+(4,'Pintura general #12 inm04','2026-04-13',NULL,37000.00,NULL,'2026-09-13 08:00:00','2026-09-13 09:00:00'),
+(5,'Arreglo electrico #13 inm05','2026-05-14','2026-06-19',38000.00,'comprobante_13.pdf','2026-09-14 08:00:00','2026-09-14 09:00:00'),
+(5,'Cambio de cerradura #14 inm05','2026-06-15','2026-07-20',39000.00,'comprobante_14.pdf','2026-09-15 08:00:00','2026-09-15 09:00:00'),
+(5,'Humedad en pared #15 inm05','2026-07-16',NULL,40000.00,NULL,'2026-09-16 08:00:00','2026-09-16 09:00:00'),
+(6,'Reparacion de piso #16 inm06','2026-08-17','2026-09-22',41000.00,'comprobante_16.pdf','2026-09-17 08:00:00','2026-09-17 09:00:00'),
+(7,'Falla de termotanque #17 inm07','2026-09-18','2026-01-23',42000.00,'comprobante_17.pdf','2026-09-18 08:00:00','2026-09-18 09:00:00'),
+(8,'Vidrio roto #18 inm08','2026-01-19',NULL,43000.00,NULL,'2026-09-19 08:00:00','2026-09-19 09:00:00'),
+(9,'Porton trabado #19 inm09','2026-02-20','2026-03-25',44000.00,'comprobante_19.pdf','2026-09-20 08:00:00','2026-09-20 09:00:00'),
+(10,'Filtracion en techo #20 inm10','2026-03-21','2026-04-26',45000.00,'comprobante_20.pdf','2026-09-21 08:00:00','2026-09-21 09:00:00'),
+(11,'Rotura de caneria #21 inm11','2026-04-22',NULL,46000.00,NULL,'2026-09-22 08:00:00','2026-09-22 09:00:00'),
+(12,'Pintura general #22 inm12','2026-05-23','2026-06-28',47000.00,'comprobante_22.pdf','2026-09-23 08:00:00','2026-09-23 09:00:00'),
+(13,'Arreglo electrico #23 inm13','2026-06-24','2026-07-01',48000.00,'comprobante_23.pdf','2026-09-24 08:00:00','2026-09-24 09:00:00'),
+(14,'Cambio de cerradura #24 inm14','2026-07-25',NULL,49000.00,NULL,'2026-09-25 08:00:00','2026-09-25 09:00:00'),
+(15,'Humedad en pared #25 inm15','2026-08-26','2026-09-03',50000.00,'comprobante_25.pdf','2026-09-26 08:00:00','2026-09-26 09:00:00'),
+(16,'Reparacion de piso #26 inm16','2026-09-27','2026-01-04',51000.00,'comprobante_26.pdf','2026-09-27 08:00:00','2026-09-27 09:00:00'),
+(17,'Falla de termotanque #27 inm17','2026-01-28',NULL,52000.00,NULL,'2026-09-28 08:00:00','2026-09-28 09:00:00'),
+(18,'Vidrio roto #28 inm18','2026-02-01','2026-03-06',53000.00,'comprobante_28.pdf','2026-09-01 08:00:00','2026-09-01 09:00:00'),
+(19,'Porton trabado #29 inm19','2026-03-02','2026-04-07',54000.00,'comprobante_29.pdf','2026-09-02 08:00:00','2026-09-02 09:00:00'),
+(20,'Filtracion en techo #30 inm20','2026-04-03',NULL,55000.00,NULL,'2026-09-03 08:00:00','2026-09-03 09:00:00'),
+(21,'Rotura de caneria #31 inm21','2026-05-04','2026-06-09',56000.00,'comprobante_31.pdf','2026-09-04 08:00:00','2026-09-04 09:00:00'),
+(22,'Pintura general #32 inm22','2026-06-05','2026-07-10',57000.00,'comprobante_32.pdf','2026-09-05 08:00:00','2026-09-05 09:00:00'),
+(23,'Arreglo electrico #33 inm23','2026-07-06',NULL,58000.00,NULL,'2026-09-06 08:00:00','2026-09-06 09:00:00'),
+(24,'Cambio de cerradura #34 inm24','2026-08-07','2026-09-12',59000.00,'comprobante_34.pdf','2026-09-07 08:00:00','2026-09-07 09:00:00'),
+(25,'Humedad en pared #35 inm25','2026-09-08','2026-01-13',60000.00,'comprobante_35.pdf','2026-09-08 08:00:00','2026-09-08 09:00:00'),
+(26,'Reparacion de piso #36 inm26','2026-01-09',NULL,61000.00,NULL,'2026-09-09 08:00:00','2026-09-09 09:00:00'),
+(27,'Falla de termotanque #37 inm27','2026-02-10','2026-03-15',62000.00,'comprobante_37.pdf','2026-09-10 08:00:00','2026-09-10 09:00:00'),
+(28,'Vidrio roto #38 inm28','2026-03-11','2026-04-16',63000.00,'comprobante_38.pdf','2026-09-11 08:00:00','2026-09-11 09:00:00'),
+(29,'Porton trabado #39 inm29','2026-04-12',NULL,64000.00,NULL,'2026-09-12 08:00:00','2026-09-12 09:00:00'),
+(30,'Filtracion en techo #40 inm30','2026-05-13','2026-06-18',65000.00,'comprobante_40.pdf','2026-09-13 08:00:00','2026-09-13 09:00:00'),
+(31,'Rotura de caneria #41 inm31','2026-06-14','2026-07-19',66000.00,'comprobante_41.pdf','2026-09-14 08:00:00','2026-09-14 09:00:00'),
+(32,'Pintura general #42 inm32','2026-07-15',NULL,67000.00,NULL,'2026-09-15 08:00:00','2026-09-15 09:00:00'),
+(33,'Arreglo electrico #43 inm33','2026-08-16','2026-09-21',68000.00,'comprobante_43.pdf','2026-09-16 08:00:00','2026-09-16 09:00:00'),
+(34,'Cambio de cerradura #44 inm34','2026-09-17','2026-01-22',69000.00,'comprobante_44.pdf','2026-09-17 08:00:00','2026-09-17 09:00:00'),
+(35,'Humedad en pared #45 inm35','2026-01-18',NULL,70000.00,NULL,'2026-09-18 08:00:00','2026-09-18 09:00:00'),
+(36,'Reparacion de piso #46 inm36','2026-02-19','2026-03-24',71000.00,'comprobante_46.pdf','2026-09-19 08:00:00','2026-09-19 09:00:00'),
+(37,'Falla de termotanque #47 inm37','2026-03-20','2026-04-25',72000.00,'comprobante_47.pdf','2026-09-20 08:00:00','2026-09-20 09:00:00'),
+(38,'Vidrio roto #48 inm38','2026-04-21',NULL,73000.00,NULL,'2026-09-21 08:00:00','2026-09-21 09:00:00'),
+(39,'Porton trabado #49 inm39','2026-05-22','2026-06-27',74000.00,'comprobante_49.pdf','2026-09-22 08:00:00','2026-09-22 09:00:00'),
+(40,'Filtracion en techo #50 inm40','2026-06-23','2026-07-28',75000.00,'comprobante_50.pdf','2026-09-23 08:00:00','2026-09-23 09:00:00');
+ALTER TABLE `reparaciones` AUTO_INCREMENT = 51;
+
+-- ============================================================================
+-- 9. NOTIFICACIONES (50) - User 1-N + Contrato 1-N (contrato_id nullable)
+-- user 1: 3 | users 2-10: 2 | users 11-39: 1 | users 40-50: 0
+-- 40 con contrato, 10 con NULL | leida (timestamp) / no leida (NULL)
+-- ============================================================================
+INSERT INTO `notificaciones` (`usuario_id`,`contrato_id`,`mensaje`,`leida_en`,`created_at`,`updated_at`) VALUES
+(1,2,'Actualizacion de monto #01 (user01)',NULL,'2026-10-02 08:00:00','2026-10-02 09:00:00'),
+(1,3,'Reparacion programada #02 (user01)','2026-10-03 12:00:00','2026-10-03 08:00:00','2026-10-03 09:00:00'),
+(1,4,'Pago acreditado #03 (user01)',NULL,'2026-10-04 08:00:00','2026-10-04 09:00:00'),
+(2,5,'Contrato por vencer #04 (user02)','2026-10-05 12:00:00','2026-10-05 08:00:00','2026-10-05 09:00:00'),
+(2,NULL,'Liquidacion disponible #05 (user02)',NULL,'2026-10-06 08:00:00','2026-10-06 09:00:00'),
+(3,7,'Recordatorio de expensas #06 (user03)','2026-10-07 12:00:00','2026-10-07 08:00:00','2026-10-07 09:00:00'),
+(3,8,'Inspeccion de inmueble #07 (user03)',NULL,'2026-10-08 08:00:00','2026-10-08 09:00:00'),
+(4,9,'Vencimiento de alquiler #08 (user04)','2026-10-09 12:00:00','2026-10-09 08:00:00','2026-10-09 09:00:00'),
+(4,10,'Actualizacion de monto #09 (user04)',NULL,'2026-10-10 08:00:00','2026-10-10 09:00:00'),
+(5,NULL,'Reparacion programada #10 (user05)','2026-10-11 12:00:00','2026-10-11 08:00:00','2026-10-11 09:00:00'),
+(5,12,'Pago acreditado #11 (user05)',NULL,'2026-10-12 08:00:00','2026-10-12 09:00:00'),
+(6,13,'Contrato por vencer #12 (user06)','2026-10-13 12:00:00','2026-10-13 08:00:00','2026-10-13 09:00:00'),
+(6,14,'Liquidacion disponible #13 (user06)',NULL,'2026-10-14 08:00:00','2026-10-14 09:00:00'),
+(7,15,'Recordatorio de expensas #14 (user07)','2026-10-15 12:00:00','2026-10-15 08:00:00','2026-10-15 09:00:00'),
+(7,NULL,'Inspeccion de inmueble #15 (user07)',NULL,'2026-10-16 08:00:00','2026-10-16 09:00:00'),
+(8,17,'Vencimiento de alquiler #16 (user08)','2026-10-17 12:00:00','2026-10-17 08:00:00','2026-10-17 09:00:00'),
+(8,18,'Actualizacion de monto #17 (user08)',NULL,'2026-10-18 08:00:00','2026-10-18 09:00:00'),
+(9,19,'Reparacion programada #18 (user09)','2026-10-19 12:00:00','2026-10-19 08:00:00','2026-10-19 09:00:00'),
+(9,20,'Pago acreditado #19 (user09)',NULL,'2026-10-20 08:00:00','2026-10-20 09:00:00'),
+(10,NULL,'Contrato por vencer #20 (user10)','2026-10-21 12:00:00','2026-10-21 08:00:00','2026-10-21 09:00:00'),
+(10,22,'Liquidacion disponible #21 (user10)',NULL,'2026-10-22 08:00:00','2026-10-22 09:00:00'),
+(11,23,'Recordatorio de expensas #22 (user11)','2026-10-23 12:00:00','2026-10-23 08:00:00','2026-10-23 09:00:00'),
+(12,24,'Inspeccion de inmueble #23 (user12)',NULL,'2026-10-24 08:00:00','2026-10-24 09:00:00'),
+(13,25,'Vencimiento de alquiler #24 (user13)','2026-10-25 12:00:00','2026-10-25 08:00:00','2026-10-25 09:00:00'),
+(14,NULL,'Actualizacion de monto #25 (user14)',NULL,'2026-10-26 08:00:00','2026-10-26 09:00:00'),
+(15,27,'Reparacion programada #26 (user15)','2026-10-27 12:00:00','2026-10-27 08:00:00','2026-10-27 09:00:00'),
+(16,28,'Pago acreditado #27 (user16)',NULL,'2026-10-28 08:00:00','2026-10-28 09:00:00'),
+(17,29,'Contrato por vencer #28 (user17)','2026-10-01 12:00:00','2026-10-01 08:00:00','2026-10-01 09:00:00'),
+(18,30,'Liquidacion disponible #29 (user18)',NULL,'2026-10-02 08:00:00','2026-10-02 09:00:00'),
+(19,NULL,'Recordatorio de expensas #30 (user19)','2026-10-03 12:00:00','2026-10-03 08:00:00','2026-10-03 09:00:00'),
+(20,32,'Inspeccion de inmueble #31 (user20)',NULL,'2026-10-04 08:00:00','2026-10-04 09:00:00'),
+(21,33,'Vencimiento de alquiler #32 (user21)','2026-10-05 12:00:00','2026-10-05 08:00:00','2026-10-05 09:00:00'),
+(22,34,'Actualizacion de monto #33 (user22)',NULL,'2026-10-06 08:00:00','2026-10-06 09:00:00'),
+(23,35,'Reparacion programada #34 (user23)','2026-10-07 12:00:00','2026-10-07 08:00:00','2026-10-07 09:00:00'),
+(24,NULL,'Pago acreditado #35 (user24)',NULL,'2026-10-08 08:00:00','2026-10-08 09:00:00'),
+(25,37,'Contrato por vencer #36 (user25)','2026-10-09 12:00:00','2026-10-09 08:00:00','2026-10-09 09:00:00'),
+(26,38,'Liquidacion disponible #37 (user26)',NULL,'2026-10-10 08:00:00','2026-10-10 09:00:00'),
+(27,39,'Recordatorio de expensas #38 (user27)','2026-10-11 12:00:00','2026-10-11 08:00:00','2026-10-11 09:00:00'),
+(28,40,'Inspeccion de inmueble #39 (user28)',NULL,'2026-10-12 08:00:00','2026-10-12 09:00:00'),
+(29,NULL,'Vencimiento de alquiler #40 (user29)','2026-10-13 12:00:00','2026-10-13 08:00:00','2026-10-13 09:00:00'),
+(30,2,'Actualizacion de monto #41 (user30)',NULL,'2026-10-14 08:00:00','2026-10-14 09:00:00'),
+(31,3,'Reparacion programada #42 (user31)','2026-10-15 12:00:00','2026-10-15 08:00:00','2026-10-15 09:00:00'),
+(32,4,'Pago acreditado #43 (user32)',NULL,'2026-10-16 08:00:00','2026-10-16 09:00:00'),
+(33,5,'Contrato por vencer #44 (user33)','2026-10-17 12:00:00','2026-10-17 08:00:00','2026-10-17 09:00:00'),
+(34,NULL,'Liquidacion disponible #45 (user34)',NULL,'2026-10-18 08:00:00','2026-10-18 09:00:00'),
+(35,7,'Recordatorio de expensas #46 (user35)','2026-10-19 12:00:00','2026-10-19 08:00:00','2026-10-19 09:00:00'),
+(36,8,'Inspeccion de inmueble #47 (user36)',NULL,'2026-10-20 08:00:00','2026-10-20 09:00:00'),
+(37,9,'Vencimiento de alquiler #48 (user37)','2026-10-21 12:00:00','2026-10-21 08:00:00','2026-10-21 09:00:00'),
+(38,10,'Actualizacion de monto #49 (user38)',NULL,'2026-10-22 08:00:00','2026-10-22 09:00:00'),
+(39,NULL,'Reparacion programada #50 (user39)','2026-10-23 12:00:00','2026-10-23 08:00:00','2026-10-23 09:00:00');
+ALTER TABLE `notificaciones` AUTO_INCREMENT = 51;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- Verificacion rapida (ejecutar despues de importar):
+-- SELECT 'users', COUNT(*) FROM users UNION ALL SELECT 'personas', COUNT(*) FROM personas
+-- UNION ALL SELECT 'inmuebles', COUNT(*) FROM inmuebles UNION ALL SELECT 'contratos', COUNT(*) FROM contratos
+-- UNION ALL SELECT 'contrato_inquilino', COUNT(*) FROM contrato_inquilino
+-- UNION ALL SELECT 'contrato_garante', COUNT(*) FROM contrato_garante
+-- UNION ALL SELECT 'liquidaciones', COUNT(*) FROM liquidaciones
+-- UNION ALL SELECT 'reparaciones', COUNT(*) FROM reparaciones
+-- UNION ALL SELECT 'notificaciones', COUNT(*) FROM notificaciones;

@@ -22,8 +22,10 @@
                     <span class="font-bold text-xl text-gray-900">InmoSys</span>
                 </div>
                 <div class="flex items-center">
-                    <a href="/login" class="text-gray-600 hover:text-indigo-600 font-semibold px-4">Iniciar Sesión</a>
-                    <a href="/register" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md font-semibold transition duration-300">Registrarse</a>
+                    <form method="POST">
+                        <a href="{{ route('contratos') }}" class="text-gray-600 hover:text-indigo-600 font-semibold px-4">Iniciar Sesión</a>
+                        <a href="/register" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md font-semibold transition duration-300">Registrarse</a>
+                    </form>
                 </div>
             </div>
         </div>
